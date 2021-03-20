@@ -1,0 +1,2904 @@
+[
+  {
+    "constructor": "AccessorDeclarationSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "Body",
+        "type": "BlockSyntax"
+      },
+      {
+        "name": "ExpressionBody",
+        "type": "ArrowExpressionClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "AccessorListSyntax",
+    "fields": [
+      {
+        "name": "Accessors",
+        "type": "SyntaxList<AccessorDeclarationSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "AliasQualifiedNameSyntax",
+    "fields": [
+      {
+        "name": "Alias",
+        "type": "IdentifierNameSyntax"
+      },
+      {
+        "name": "Name",
+        "type": "SimpleNameSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "AnonymousMethodExpressionSyntax",
+    "fields": [
+      {
+        "name": "ParameterList",
+        "type": "ParameterListSyntax"
+      },
+      {
+        "name": "Body",
+        "type": "CSharpSyntaxNode"
+      }
+    ]
+  },
+  {
+    "constructor": "AnonymousObjectCreationExpressionSyntax",
+    "fields": [
+      {
+        "name": "Initializers",
+        "type": "SeparatedSyntaxList<AnonymousObjectMemberDeclaratorSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "AnonymousObjectMemberDeclaratorSyntax",
+    "fields": [
+      {
+        "name": "NameEquals",
+        "type": "NameEqualsSyntax"
+      },
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ArgumentListSyntax",
+    "fields": [
+      {
+        "name": "Arguments",
+        "type": "SeparatedSyntaxList<ArgumentSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "ArgumentSyntax",
+    "fields": [
+      {
+        "name": "NameColon",
+        "type": "NameColonSyntax"
+      },
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ArrayCreationExpressionSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "ArrayTypeSyntax"
+      },
+      {
+        "name": "Initializer",
+        "type": "InitializerExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ArrayRankSpecifierSyntax",
+    "fields": [
+      {
+        "name": "Sizes",
+        "type": "SeparatedSyntaxList<ExpressionSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "ArrayTypeSyntax",
+    "fields": [
+      {
+        "name": "ElementType",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "RankSpecifiers",
+        "type": "SyntaxList<ArrayRankSpecifierSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "ArrowExpressionClauseSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "AssignmentExpressionSyntax",
+    "fields": [
+      {
+        "name": "Left",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "Right",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "AttributeArgumentListSyntax",
+    "fields": [
+      {
+        "name": "Arguments",
+        "type": "SeparatedSyntaxList<AttributeArgumentSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "AttributeArgumentSyntax",
+    "fields": [
+      {
+        "name": "NameEquals",
+        "type": "NameEqualsSyntax"
+      },
+      {
+        "name": "NameColon",
+        "type": "NameColonSyntax"
+      },
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "AttributeListSyntax",
+    "fields": [
+      {
+        "name": "Target",
+        "type": "AttributeTargetSpecifierSyntax"
+      },
+      {
+        "name": "Attributes",
+        "type": "SeparatedSyntaxList<AttributeSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "AttributeSyntax",
+    "fields": [
+      {
+        "name": "Name",
+        "type": "NameSyntax"
+      },
+      {
+        "name": "ArgumentList",
+        "type": "AttributeArgumentListSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "AttributeTargetSpecifierSyntax",
+    "fields": [
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      }
+    ]
+  },
+  {
+    "constructor": "AwaitExpressionSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "BadDirectiveTriviaSyntax",
+    "fields": [
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "IsActive",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "constructor": "BaseExpressionSyntax",
+    "fields": []
+  },
+  {
+    "constructor": "BaseListSyntax",
+    "fields": [
+      {
+        "name": "Types",
+        "type": "SeparatedSyntaxList<BaseTypeSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "BinaryExpressionSyntax",
+    "fields": [
+      {
+        "name": "Left",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "Right",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "BlockSyntax",
+    "fields": [
+      {
+        "name": "Statements",
+        "type": "SyntaxList<StatementSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "BracketedArgumentListSyntax",
+    "fields": [
+      {
+        "name": "Arguments",
+        "type": "SeparatedSyntaxList<ArgumentSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "BracketedParameterListSyntax",
+    "fields": [
+      {
+        "name": "Parameters",
+        "type": "SeparatedSyntaxList<ParameterSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "BreakStatementSyntax",
+    "fields": []
+  },
+  {
+    "constructor": "CasePatternSwitchLabelSyntax",
+    "fields": [
+      {
+        "name": "Pattern",
+        "type": "PatternSyntax"
+      },
+      {
+        "name": "WhenClause",
+        "type": "WhenClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "CaseSwitchLabelSyntax",
+    "fields": [
+      {
+        "name": "Value",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "CastExpressionSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "CatchClauseSyntax",
+    "fields": [
+      {
+        "name": "Declaration",
+        "type": "CatchDeclarationSyntax"
+      },
+      {
+        "name": "Filter",
+        "type": "CatchFilterClauseSyntax"
+      },
+      {
+        "name": "Block",
+        "type": "BlockSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "CatchDeclarationSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      }
+    ]
+  },
+  {
+    "constructor": "CatchFilterClauseSyntax",
+    "fields": [
+      {
+        "name": "FilterExpression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "CheckedExpressionSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "CheckedStatementSyntax",
+    "fields": [
+      {
+        "name": "Block",
+        "type": "BlockSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ClassDeclarationSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "TypeParameterList",
+        "type": "TypeParameterListSyntax"
+      },
+      {
+        "name": "BaseList",
+        "type": "BaseListSyntax"
+      },
+      {
+        "name": "ConstraintClauses",
+        "type": "SyntaxList<TypeParameterConstraintClauseSyntax>"
+      },
+      {
+        "name": "Members",
+        "type": "SyntaxList<MemberDeclarationSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "ClassOrStructConstraintSyntax",
+    "fields": []
+  },
+  {
+    "constructor": "CompilationUnitSyntax",
+    "fields": [
+      {
+        "name": "Externs",
+        "type": "SyntaxList<ExternAliasDirectiveSyntax>"
+      },
+      {
+        "name": "Usings",
+        "type": "SyntaxList<UsingDirectiveSyntax>"
+      },
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Members",
+        "type": "SyntaxList<MemberDeclarationSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "ConditionalAccessExpressionSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "WhenNotNull",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ConditionalExpressionSyntax",
+    "fields": [
+      {
+        "name": "Condition",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "WhenTrue",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "WhenFalse",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ConstantPatternSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ConstructorConstraintSyntax",
+    "fields": []
+  },
+  {
+    "constructor": "ConstructorDeclarationSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "ParameterList",
+        "type": "ParameterListSyntax"
+      },
+      {
+        "name": "Initializer",
+        "type": "ConstructorInitializerSyntax"
+      },
+      {
+        "name": "Body",
+        "type": "BlockSyntax"
+      },
+      {
+        "name": "ExpressionBody",
+        "type": "ArrowExpressionClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ConstructorInitializerSyntax",
+    "fields": [
+      {
+        "name": "ArgumentList",
+        "type": "ArgumentListSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ContinueStatementSyntax",
+    "fields": []
+  },
+  {
+    "constructor": "ConversionOperatorDeclarationSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "ParameterList",
+        "type": "ParameterListSyntax"
+      },
+      {
+        "name": "Body",
+        "type": "BlockSyntax"
+      },
+      {
+        "name": "ExpressionBody",
+        "type": "ArrowExpressionClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ConversionOperatorMemberCrefSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "Parameters",
+        "type": "CrefParameterListSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "CrefBracketedParameterListSyntax",
+    "fields": [
+      {
+        "name": "Parameters",
+        "type": "SeparatedSyntaxList<CrefParameterSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "CrefParameterListSyntax",
+    "fields": [
+      {
+        "name": "Parameters",
+        "type": "SeparatedSyntaxList<CrefParameterSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "CrefParameterSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "DeclarationExpressionSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "Designation",
+        "type": "VariableDesignationSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "DeclarationPatternSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "Designation",
+        "type": "VariableDesignationSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "DefaultExpressionSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "DefaultSwitchLabelSyntax",
+    "fields": []
+  },
+  {
+    "constructor": "DefineDirectiveTriviaSyntax",
+    "fields": [
+      {
+        "name": "IsActive",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "constructor": "DelegateDeclarationSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "ReturnType",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "TypeParameterList",
+        "type": "TypeParameterListSyntax"
+      },
+      {
+        "name": "ParameterList",
+        "type": "ParameterListSyntax"
+      },
+      {
+        "name": "ConstraintClauses",
+        "type": "SyntaxList<TypeParameterConstraintClauseSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "DestructorDeclarationSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "ParameterList",
+        "type": "ParameterListSyntax"
+      },
+      {
+        "name": "Body",
+        "type": "BlockSyntax"
+      },
+      {
+        "name": "ExpressionBody",
+        "type": "ArrowExpressionClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "DiscardDesignationSyntax",
+    "fields": []
+  },
+  {
+    "constructor": "DoStatementSyntax",
+    "fields": [
+      {
+        "name": "Statement",
+        "type": "StatementSyntax"
+      },
+      {
+        "name": "Condition",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "DocumentationCommentTriviaSyntax",
+    "fields": [
+      {
+        "name": "Content",
+        "type": "SyntaxList<XmlNodeSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "ElementAccessExpressionSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "ArgumentList",
+        "type": "BracketedArgumentListSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ElementBindingExpressionSyntax",
+    "fields": [
+      {
+        "name": "ArgumentList",
+        "type": "BracketedArgumentListSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ElifDirectiveTriviaSyntax",
+    "fields": [
+      {
+        "name": "Condition",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "IsActive",
+        "type": "bool"
+      },
+      {
+        "name": "BranchTaken",
+        "type": "bool"
+      },
+      {
+        "name": "ConditionValue",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "constructor": "ElseClauseSyntax",
+    "fields": [
+      {
+        "name": "Statement",
+        "type": "StatementSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ElseDirectiveTriviaSyntax",
+    "fields": [
+      {
+        "name": "IsActive",
+        "type": "bool"
+      },
+      {
+        "name": "BranchTaken",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "constructor": "EmptyStatementSyntax",
+    "fields": []
+  },
+  {
+    "constructor": "EndIfDirectiveTriviaSyntax",
+    "fields": [
+      {
+        "name": "IsActive",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "constructor": "EndRegionDirectiveTriviaSyntax",
+    "fields": [
+      {
+        "name": "IsActive",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "constructor": "EnumDeclarationSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "BaseList",
+        "type": "BaseListSyntax"
+      },
+      {
+        "name": "Members",
+        "type": "SeparatedSyntaxList<EnumMemberDeclarationSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "EnumMemberDeclarationSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "EqualsValue",
+        "type": "EqualsValueClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "EqualsValueClauseSyntax",
+    "fields": [
+      {
+        "name": "Value",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ErrorDirectiveTriviaSyntax",
+    "fields": [
+      {
+        "name": "IsActive",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "constructor": "EventDeclarationSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "ExplicitInterfaceSpecifier",
+        "type": "ExplicitInterfaceSpecifierSyntax"
+      },
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "AccessorList",
+        "type": "AccessorListSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "EventFieldDeclarationSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "Declaration",
+        "type": "VariableDeclarationSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ExplicitInterfaceSpecifierSyntax",
+    "fields": [
+      {
+        "name": "Name",
+        "type": "NameSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ExpressionStatementSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ExternAliasDirectiveSyntax",
+    "fields": [
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      }
+    ]
+  },
+  {
+    "constructor": "FieldDeclarationSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "Declaration",
+        "type": "VariableDeclarationSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "FinallyClauseSyntax",
+    "fields": [
+      {
+        "name": "Block",
+        "type": "BlockSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "FixedStatementSyntax",
+    "fields": [
+      {
+        "name": "Declaration",
+        "type": "VariableDeclarationSyntax"
+      },
+      {
+        "name": "Statement",
+        "type": "StatementSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ForEachStatementSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "Statement",
+        "type": "StatementSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ForEachVariableStatementSyntax",
+    "fields": [
+      {
+        "name": "Variable",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "Statement",
+        "type": "StatementSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ForStatementSyntax",
+    "fields": [
+      {
+        "name": "Declaration",
+        "type": "VariableDeclarationSyntax"
+      },
+      {
+        "name": "Initializers",
+        "type": "SeparatedSyntaxList<ExpressionSyntax>"
+      },
+      {
+        "name": "Condition",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "Incrementors",
+        "type": "SeparatedSyntaxList<ExpressionSyntax>"
+      },
+      {
+        "name": "Statement",
+        "type": "StatementSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "FromClauseSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "GenericNameSyntax",
+    "fields": [
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "TypeArgumentList",
+        "type": "TypeArgumentListSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "GlobalStatementSyntax",
+    "fields": [
+      {
+        "name": "Statement",
+        "type": "StatementSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "GotoStatementSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "GroupClauseSyntax",
+    "fields": [
+      {
+        "name": "GroupExpression",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "ByExpression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "IdentifierNameSyntax",
+    "fields": [
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      }
+    ]
+  },
+  {
+    "constructor": "IfDirectiveTriviaSyntax",
+    "fields": [
+      {
+        "name": "Condition",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "IsActive",
+        "type": "bool"
+      },
+      {
+        "name": "BranchTaken",
+        "type": "bool"
+      },
+      {
+        "name": "ConditionValue",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "constructor": "IfStatementSyntax",
+    "fields": [
+      {
+        "name": "Condition",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "Statement",
+        "type": "StatementSyntax"
+      },
+      {
+        "name": "Else",
+        "type": "ElseClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ImplicitArrayCreationExpressionSyntax",
+    "fields": [
+      {
+        "name": "Commas",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "Initializer",
+        "type": "InitializerExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ImplicitElementAccessSyntax",
+    "fields": [
+      {
+        "name": "ArgumentList",
+        "type": "BracketedArgumentListSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ImplicitStackAllocArrayCreationExpressionSyntax",
+    "fields": [
+      {
+        "name": "Initializer",
+        "type": "InitializerExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "IncompleteMemberSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "IndexerDeclarationSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "ExplicitInterfaceSpecifier",
+        "type": "ExplicitInterfaceSpecifierSyntax"
+      },
+      {
+        "name": "ParameterList",
+        "type": "BracketedParameterListSyntax"
+      },
+      {
+        "name": "AccessorList",
+        "type": "AccessorListSyntax"
+      },
+      {
+        "name": "ExpressionBody",
+        "type": "ArrowExpressionClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "IndexerMemberCrefSyntax",
+    "fields": [
+      {
+        "name": "Parameters",
+        "type": "CrefBracketedParameterListSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "InitializerExpressionSyntax",
+    "fields": [
+      {
+        "name": "Expressions",
+        "type": "SeparatedSyntaxList<ExpressionSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "InterfaceDeclarationSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "TypeParameterList",
+        "type": "TypeParameterListSyntax"
+      },
+      {
+        "name": "BaseList",
+        "type": "BaseListSyntax"
+      },
+      {
+        "name": "ConstraintClauses",
+        "type": "SyntaxList<TypeParameterConstraintClauseSyntax>"
+      },
+      {
+        "name": "Members",
+        "type": "SyntaxList<MemberDeclarationSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "InterpolatedStringExpressionSyntax",
+    "fields": [
+      {
+        "name": "Contents",
+        "type": "SyntaxList<InterpolatedStringContentSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "InterpolatedStringTextSyntax",
+    "fields": []
+  },
+  {
+    "constructor": "InterpolationAlignmentClauseSyntax",
+    "fields": [
+      {
+        "name": "Value",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "InterpolationFormatClauseSyntax",
+    "fields": []
+  },
+  {
+    "constructor": "InterpolationSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "AlignmentClause",
+        "type": "InterpolationAlignmentClauseSyntax"
+      },
+      {
+        "name": "FormatClause",
+        "type": "InterpolationFormatClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "InvocationExpressionSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "ArgumentList",
+        "type": "ArgumentListSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "IsPatternExpressionSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "Pattern",
+        "type": "PatternSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "JoinClauseSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "InExpression",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "LeftExpression",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "RightExpression",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "Into",
+        "type": "JoinIntoClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "JoinIntoClauseSyntax",
+    "fields": [
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      }
+    ]
+  },
+  {
+    "constructor": "LabeledStatementSyntax",
+    "fields": [
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "Statement",
+        "type": "StatementSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "LetClauseSyntax",
+    "fields": [
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "LineDirectiveTriviaSyntax",
+    "fields": [
+      {
+        "name": "Line",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "File",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "IsActive",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "constructor": "LiteralExpressionSyntax",
+    "fields": [
+      {
+        "name": "Token",
+        "type": "SyntaxToken"
+      }
+    ]
+  },
+  {
+    "constructor": "LoadDirectiveTriviaSyntax",
+    "fields": [
+      {
+        "name": "File",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "IsActive",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "constructor": "LocalDeclarationStatementSyntax",
+    "fields": [
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "Declaration",
+        "type": "VariableDeclarationSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "LocalFunctionStatementSyntax",
+    "fields": [
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "ReturnType",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "TypeParameterList",
+        "type": "TypeParameterListSyntax"
+      },
+      {
+        "name": "ParameterList",
+        "type": "ParameterListSyntax"
+      },
+      {
+        "name": "ConstraintClauses",
+        "type": "SyntaxList<TypeParameterConstraintClauseSyntax>"
+      },
+      {
+        "name": "Body",
+        "type": "BlockSyntax"
+      },
+      {
+        "name": "ExpressionBody",
+        "type": "ArrowExpressionClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "LockStatementSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "Statement",
+        "type": "StatementSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "MakeRefExpressionSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "MemberAccessExpressionSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "Name",
+        "type": "SimpleNameSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "MemberBindingExpressionSyntax",
+    "fields": [
+      {
+        "name": "Name",
+        "type": "SimpleNameSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "MethodDeclarationSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "ReturnType",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "ExplicitInterfaceSpecifier",
+        "type": "ExplicitInterfaceSpecifierSyntax"
+      },
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "TypeParameterList",
+        "type": "TypeParameterListSyntax"
+      },
+      {
+        "name": "ParameterList",
+        "type": "ParameterListSyntax"
+      },
+      {
+        "name": "ConstraintClauses",
+        "type": "SyntaxList<TypeParameterConstraintClauseSyntax>"
+      },
+      {
+        "name": "Body",
+        "type": "BlockSyntax"
+      },
+      {
+        "name": "ExpressionBody",
+        "type": "ArrowExpressionClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "NameColonSyntax",
+    "fields": [
+      {
+        "name": "Name",
+        "type": "IdentifierNameSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "NameEqualsSyntax",
+    "fields": [
+      {
+        "name": "Name",
+        "type": "IdentifierNameSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "NameMemberCrefSyntax",
+    "fields": [
+      {
+        "name": "Name",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "Parameters",
+        "type": "CrefParameterListSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "NamespaceDeclarationSyntax",
+    "fields": [
+      {
+        "name": "Name",
+        "type": "NameSyntax"
+      },
+      {
+        "name": "Externs",
+        "type": "SyntaxList<ExternAliasDirectiveSyntax>"
+      },
+      {
+        "name": "Usings",
+        "type": "SyntaxList<UsingDirectiveSyntax>"
+      },
+      {
+        "name": "Members",
+        "type": "SyntaxList<MemberDeclarationSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "NullableTypeSyntax",
+    "fields": [
+      {
+        "name": "ElementType",
+        "type": "TypeSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ObjectCreationExpressionSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "ArgumentList",
+        "type": "ArgumentListSyntax"
+      },
+      {
+        "name": "Initializer",
+        "type": "InitializerExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "OmittedArraySizeExpressionSyntax",
+    "fields": []
+  },
+  {
+    "constructor": "OmittedTypeArgumentSyntax",
+    "fields": []
+  },
+  {
+    "constructor": "OperatorDeclarationSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "ReturnType",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "ParameterList",
+        "type": "ParameterListSyntax"
+      },
+      {
+        "name": "Body",
+        "type": "BlockSyntax"
+      },
+      {
+        "name": "ExpressionBody",
+        "type": "ArrowExpressionClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "OperatorMemberCrefSyntax",
+    "fields": [
+      {
+        "name": "Parameters",
+        "type": "CrefParameterListSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "OrderByClauseSyntax",
+    "fields": [
+      {
+        "name": "Orderings",
+        "type": "SeparatedSyntaxList<OrderingSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "OrderingSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ParameterListSyntax",
+    "fields": [
+      {
+        "name": "Parameters",
+        "type": "SeparatedSyntaxList<ParameterSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "ParameterSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "Default",
+        "type": "EqualsValueClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ParenthesizedExpressionSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ParenthesizedLambdaExpressionSyntax",
+    "fields": [
+      {
+        "name": "ParameterList",
+        "type": "ParameterListSyntax"
+      },
+      {
+        "name": "Body",
+        "type": "CSharpSyntaxNode"
+      }
+    ]
+  },
+  {
+    "constructor": "ParenthesizedVariableDesignationSyntax",
+    "fields": [
+      {
+        "name": "Variables",
+        "type": "SeparatedSyntaxList<VariableDesignationSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "PointerTypeSyntax",
+    "fields": [
+      {
+        "name": "ElementType",
+        "type": "TypeSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "PostfixUnaryExpressionSyntax",
+    "fields": [
+      {
+        "name": "Operand",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "PragmaChecksumDirectiveTriviaSyntax",
+    "fields": [
+      {
+        "name": "File",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "Guid",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "Bytes",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "IsActive",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "constructor": "PragmaWarningDirectiveTriviaSyntax",
+    "fields": [
+      {
+        "name": "ErrorCodes",
+        "type": "SeparatedSyntaxList<ExpressionSyntax>"
+      },
+      {
+        "name": "IsActive",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "constructor": "PredefinedTypeSyntax",
+    "fields": []
+  },
+  {
+    "constructor": "PrefixUnaryExpressionSyntax",
+    "fields": [
+      {
+        "name": "Operand",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "PropertyDeclarationSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "ExplicitInterfaceSpecifier",
+        "type": "ExplicitInterfaceSpecifierSyntax"
+      },
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "AccessorList",
+        "type": "AccessorListSyntax"
+      },
+      {
+        "name": "ExpressionBody",
+        "type": "ArrowExpressionClauseSyntax"
+      },
+      {
+        "name": "Initializer",
+        "type": "EqualsValueClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "QualifiedCrefSyntax",
+    "fields": [
+      {
+        "name": "Container",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "Member",
+        "type": "MemberCrefSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "QualifiedNameSyntax",
+    "fields": [
+      {
+        "name": "Left",
+        "type": "NameSyntax"
+      },
+      {
+        "name": "Right",
+        "type": "SimpleNameSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "QueryBodySyntax",
+    "fields": [
+      {
+        "name": "Clauses",
+        "type": "SyntaxList<QueryClauseSyntax>"
+      },
+      {
+        "name": "SelectOrGroup",
+        "type": "SelectOrGroupClauseSyntax"
+      },
+      {
+        "name": "Continuation",
+        "type": "QueryContinuationSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "QueryContinuationSyntax",
+    "fields": [
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "Body",
+        "type": "QueryBodySyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "QueryExpressionSyntax",
+    "fields": [
+      {
+        "name": "FromClause",
+        "type": "FromClauseSyntax"
+      },
+      {
+        "name": "Body",
+        "type": "QueryBodySyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "RefExpressionSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "RefTypeExpressionSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "RefTypeSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "RefValueExpressionSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ReferenceDirectiveTriviaSyntax",
+    "fields": [
+      {
+        "name": "File",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "IsActive",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "constructor": "RegionDirectiveTriviaSyntax",
+    "fields": [
+      {
+        "name": "IsActive",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "constructor": "ReturnStatementSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SelectClauseSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SeparatedSyntaxList<AnonymousObjectMemberDeclaratorSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "AnonymousObjectMemberDeclaratorSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SeparatedSyntaxList<ArgumentSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "ArgumentSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SeparatedSyntaxList<AttributeArgumentSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "AttributeArgumentSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SeparatedSyntaxList<AttributeSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "AttributeSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SeparatedSyntaxList<BaseTypeSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "BaseTypeSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SeparatedSyntaxList<CrefParameterSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "CrefParameterSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SeparatedSyntaxList<EnumMemberDeclarationSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "EnumMemberDeclarationSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SeparatedSyntaxList<ExpressionSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SeparatedSyntaxList<OrderingSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "OrderingSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SeparatedSyntaxList<ParameterSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "ParameterSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SeparatedSyntaxList<TupleElementSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "TupleElementSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SeparatedSyntaxList<TypeParameterConstraintSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "TypeParameterConstraintSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SeparatedSyntaxList<TypeParameterSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "TypeParameterSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SeparatedSyntaxList<TypeSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "TypeSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SeparatedSyntaxList<VariableDeclaratorSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "VariableDeclaratorSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SeparatedSyntaxList<VariableDesignationSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "VariableDesignationSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ShebangDirectiveTriviaSyntax",
+    "fields": [
+      {
+        "name": "IsActive",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "constructor": "SimpleBaseTypeSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SimpleLambdaExpressionSyntax",
+    "fields": [
+      {
+        "name": "Parameter",
+        "type": "ParameterSyntax"
+      },
+      {
+        "name": "Body",
+        "type": "CSharpSyntaxNode"
+      }
+    ]
+  },
+  {
+    "constructor": "SingleVariableDesignationSyntax",
+    "fields": [
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      }
+    ]
+  },
+  {
+    "constructor": "SizeOfExpressionSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SkippedTokensTriviaSyntax",
+    "fields": [
+      {
+        "name": "Tokens",
+        "type": "SyntaxList<SyntaxToken>"
+      }
+    ]
+  },
+  {
+    "constructor": "StackAllocArrayCreationExpressionSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "Initializer",
+        "type": "InitializerExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "StructDeclarationSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Modifiers",
+        "type": "SyntaxList<SyntaxToken>"
+      },
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "TypeParameterList",
+        "type": "TypeParameterListSyntax"
+      },
+      {
+        "name": "BaseList",
+        "type": "BaseListSyntax"
+      },
+      {
+        "name": "ConstraintClauses",
+        "type": "SyntaxList<TypeParameterConstraintClauseSyntax>"
+      },
+      {
+        "name": "Members",
+        "type": "SyntaxList<MemberDeclarationSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "SwitchSectionSyntax",
+    "fields": [
+      {
+        "name": "Labels",
+        "type": "SyntaxList<SwitchLabelSyntax>"
+      },
+      {
+        "name": "Statements",
+        "type": "SyntaxList<StatementSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "SwitchStatementSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "Sections",
+        "type": "SyntaxList<SwitchSectionSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "SyntaxList<AccessorDeclarationSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "AccessorDeclarationSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SyntaxList<ArrayRankSpecifierSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "ArrayRankSpecifierSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SyntaxList<AttributeListSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "AttributeListSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SyntaxList<CatchClauseSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "CatchClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SyntaxList<ExternAliasDirectiveSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "ExternAliasDirectiveSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SyntaxList<InterpolatedStringContentSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "InterpolatedStringContentSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SyntaxList<MemberDeclarationSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "MemberDeclarationSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SyntaxList<QueryClauseSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "QueryClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SyntaxList<StatementSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "StatementSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SyntaxList<SwitchLabelSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "SwitchLabelSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SyntaxList<SwitchSectionSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "SwitchSectionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SyntaxList<SyntaxToken>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "SyntaxToken"
+      }
+    ]
+  },
+  {
+    "constructor": "SyntaxList<TypeParameterConstraintClauseSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "TypeParameterConstraintClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SyntaxList<UsingDirectiveSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "UsingDirectiveSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SyntaxList<XmlAttributeSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "XmlAttributeSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "SyntaxList<XmlNodeSyntax>",
+    "fields": [
+      {
+        "name": "Element",
+        "type": "XmlNodeSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ThisExpressionSyntax",
+    "fields": []
+  },
+  {
+    "constructor": "ThrowExpressionSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "ThrowStatementSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "TryStatementSyntax",
+    "fields": [
+      {
+        "name": "Block",
+        "type": "BlockSyntax"
+      },
+      {
+        "name": "Catches",
+        "type": "SyntaxList<CatchClauseSyntax>"
+      },
+      {
+        "name": "Finally",
+        "type": "FinallyClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "TupleElementSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      }
+    ]
+  },
+  {
+    "constructor": "TupleExpressionSyntax",
+    "fields": [
+      {
+        "name": "Arguments",
+        "type": "SeparatedSyntaxList<ArgumentSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "TupleTypeSyntax",
+    "fields": [
+      {
+        "name": "Elements",
+        "type": "SeparatedSyntaxList<TupleElementSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "TypeArgumentListSyntax",
+    "fields": [
+      {
+        "name": "Arguments",
+        "type": "SeparatedSyntaxList<TypeSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "TypeConstraintSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "TypeCrefSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "TypeOfExpressionSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "TypeParameterConstraintClauseSyntax",
+    "fields": [
+      {
+        "name": "Name",
+        "type": "IdentifierNameSyntax"
+      },
+      {
+        "name": "Constraints",
+        "type": "SeparatedSyntaxList<TypeParameterConstraintSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "TypeParameterListSyntax",
+    "fields": [
+      {
+        "name": "Parameters",
+        "type": "SeparatedSyntaxList<TypeParameterSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "TypeParameterSyntax",
+    "fields": [
+      {
+        "name": "AttributeLists",
+        "type": "SyntaxList<AttributeListSyntax>"
+      },
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      }
+    ]
+  },
+  {
+    "constructor": "UndefDirectiveTriviaSyntax",
+    "fields": [
+      {
+        "name": "IsActive",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "constructor": "UnsafeStatementSyntax",
+    "fields": [
+      {
+        "name": "Block",
+        "type": "BlockSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "UsingDirectiveSyntax",
+    "fields": [
+      {
+        "name": "Alias",
+        "type": "NameEqualsSyntax"
+      },
+      {
+        "name": "Name",
+        "type": "NameSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "UsingStatementSyntax",
+    "fields": [
+      {
+        "name": "Declaration",
+        "type": "VariableDeclarationSyntax"
+      },
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "Statement",
+        "type": "StatementSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "VariableDeclarationSyntax",
+    "fields": [
+      {
+        "name": "Type",
+        "type": "TypeSyntax"
+      },
+      {
+        "name": "Variables",
+        "type": "SeparatedSyntaxList<VariableDeclaratorSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "VariableDeclaratorSyntax",
+    "fields": [
+      {
+        "name": "Identifier",
+        "type": "SyntaxToken"
+      },
+      {
+        "name": "ArgumentList",
+        "type": "BracketedArgumentListSyntax"
+      },
+      {
+        "name": "Initializer",
+        "type": "EqualsValueClauseSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "WarningDirectiveTriviaSyntax",
+    "fields": [
+      {
+        "name": "IsActive",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "constructor": "WhenClauseSyntax",
+    "fields": [
+      {
+        "name": "Condition",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "WhereClauseSyntax",
+    "fields": [
+      {
+        "name": "Condition",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "WhileStatementSyntax",
+    "fields": [
+      {
+        "name": "Condition",
+        "type": "ExpressionSyntax"
+      },
+      {
+        "name": "Statement",
+        "type": "StatementSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "XmlCDataSectionSyntax",
+    "fields": [
+      {
+        "name": "TextTokens",
+        "type": "SyntaxList<SyntaxToken>"
+      }
+    ]
+  },
+  {
+    "constructor": "XmlCommentSyntax",
+    "fields": [
+      {
+        "name": "TextTokens",
+        "type": "SyntaxList<SyntaxToken>"
+      }
+    ]
+  },
+  {
+    "constructor": "XmlCrefAttributeSyntax",
+    "fields": [
+      {
+        "name": "Name",
+        "type": "XmlNameSyntax"
+      },
+      {
+        "name": "Cref",
+        "type": "CrefSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "XmlElementEndTagSyntax",
+    "fields": [
+      {
+        "name": "Name",
+        "type": "XmlNameSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "XmlElementStartTagSyntax",
+    "fields": [
+      {
+        "name": "Name",
+        "type": "XmlNameSyntax"
+      },
+      {
+        "name": "Attributes",
+        "type": "SyntaxList<XmlAttributeSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "XmlElementSyntax",
+    "fields": [
+      {
+        "name": "StartTag",
+        "type": "XmlElementStartTagSyntax"
+      },
+      {
+        "name": "Content",
+        "type": "SyntaxList<XmlNodeSyntax>"
+      },
+      {
+        "name": "EndTag",
+        "type": "XmlElementEndTagSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "XmlEmptyElementSyntax",
+    "fields": [
+      {
+        "name": "Name",
+        "type": "XmlNameSyntax"
+      },
+      {
+        "name": "Attributes",
+        "type": "SyntaxList<XmlAttributeSyntax>"
+      }
+    ]
+  },
+  {
+    "constructor": "XmlNameAttributeSyntax",
+    "fields": [
+      {
+        "name": "Name",
+        "type": "XmlNameSyntax"
+      },
+      {
+        "name": "Identifier",
+        "type": "IdentifierNameSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "XmlNameSyntax",
+    "fields": [
+      {
+        "name": "Prefix",
+        "type": "XmlPrefixSyntax"
+      }
+    ]
+  },
+  {
+    "constructor": "XmlPrefixSyntax",
+    "fields": []
+  },
+  {
+    "constructor": "XmlProcessingInstructionSyntax",
+    "fields": [
+      {
+        "name": "Name",
+        "type": "XmlNameSyntax"
+      },
+      {
+        "name": "TextTokens",
+        "type": "SyntaxList<SyntaxToken>"
+      }
+    ]
+  },
+  {
+    "constructor": "XmlTextAttributeSyntax",
+    "fields": [
+      {
+        "name": "Name",
+        "type": "XmlNameSyntax"
+      },
+      {
+        "name": "TextTokens",
+        "type": "SyntaxList<SyntaxToken>"
+      }
+    ]
+  },
+  {
+    "constructor": "XmlTextSyntax",
+    "fields": [
+      {
+        "name": "TextTokens",
+        "type": "SyntaxList<SyntaxToken>"
+      }
+    ]
+  },
+  {
+    "constructor": "YieldStatementSyntax",
+    "fields": [
+      {
+        "name": "Expression",
+        "type": "ExpressionSyntax"
+      }
+    ]
+  }
+]
