@@ -33,7 +33,8 @@ Download the complete GitHubEdits and Fixers data from [Yin et al., (2019)](http
 |           |-- csharp_fixers.jsonl
 |           |-- vocab.from_repo.{080910.freq10|edit}.json
 |           |-- Syntax.xml
-|			  |-- configs
+|           |-- configs
+|               |-- ...(model config json files)
 ```
 A 20\% sample from the GitHubEdits training set has been included as `source_data/githubedits/githubedits.train_20p.jsonl`.
 
@@ -57,7 +58,7 @@ bash scripts/githubedits/train.sh source_data/githubedits/configs/graph2iteredit
 ```
 
 To further train the model with PostRefine imitation learning, 
-replace `FOLDER_OF_SUPERVISED_PRETRAINED_MODEL` with the model dir in `source_data/githubedits/configs/graph2iteredit.seq_edit_encoder.20p.postrefine.imitation.json`,
+replace `FOLDER_OF_SUPERVISED_PRETRAINED_MODEL` with your model dir in `source_data/githubedits/configs/graph2iteredit.seq_edit_encoder.20p.postrefine.imitation.json`,
 and run:
 ```
 bash scripts/githubedits/train.sh source_data/githubedits/configs/graph2iteredit.seq_edit_encoder.20p.postrefine.imitation.json
@@ -73,13 +74,12 @@ bash scripts/githubedits/test.sh
 ## 4. Reference
 If you use our code and data, please cite our paper:
 ```
-@inproceedings{
-yao2021learning,
-title={Learning Structural Edits via Incremental Tree Transformations},
-author={Ziyu Yao and Frank F. Xu and Pengcheng Yin and Huan Sun and Graham Neubig},
-booktitle={International Conference on Learning Representations},
-year={2021},
-url={https://openreview.net/forum?id=v9hAX77--cZ}
+@inproceedings{yao2021learning,
+    title={Learning Structural Edits via Incremental Tree Transformations},
+    author={Ziyu Yao and Frank F. Xu and Pengcheng Yin and Huan Sun and Graham Neubig},
+    booktitle={International Conference on Learning Representations},
+    year={2021},
+    url={https://openreview.net/forum?id=v9hAX77--cZ}
 }
 ```
 
@@ -92,8 +92,7 @@ We are grateful to the two work!
     booktitle = {Conference on Empirical Methods in Natural Language Processing (EMNLP) Demo Track},
     year = {2018}
 }
-@inproceedings{
-    yin2018learning,
+@inproceedings{yin2018learning,
     title={Learning to Represent Edits},
     author={Pengcheng Yin and Graham Neubig and Miltiadis Allamanis and Marc Brockschmidt and Alexander L. Gaunt},
     booktitle={International Conference on Learning Representations},
