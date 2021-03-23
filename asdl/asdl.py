@@ -9,47 +9,61 @@ class ASDLGrammar(object):
     """
     Collection of types, constructors and productions
     """
-
-    def __init__(self, productions, language):
+    def __init__(self, productions, root_type, language):
         self.language = language
 
         # productions are indexed by their head types
-        self._productions = OrderedDict()
+        self.productions = sorted(productions, key=lambda x: repr(x))
+
+        self.type2productions = dict()
         self._constructor_production_map = dict()
         for prod in productions:
-            if prod.type not in self._productions:
-                self._productions[prod.type] = list()
-            self._productions[prod.type].append(prod)
+            cur_type = prod.type
+            while cur_type:
+                self.type2productions.setdefault(cur_type, []).append(prod)
+                cur_type = cur_type.parent_type
+
             self._constructor_production_map[prod.constructor.name] = prod
 
-        self.root_type = productions[0].type
-        # number of constructors
-        self.size = sum(len(head) for head in self._productions.values())
+        # number of productions
+        self.size = len(productions)
 
         # get entities to their ids map
         self.prod2id = {prod: i for i, prod in enumerate(self.productions)}
         self.type2id = {type: i for i, type in enumerate(self.types)}
         self.field2id = {field: i for i, field in enumerate(self.fields)}
-
         self.id2prod = {i: prod for i, prod in enumerate(self.productions)}
         self.id2type = {i: type for i, type in enumerate(self.types)}
         self.id2field = {i: field for i, field in enumerate(self.fields)}
 
+        # field is indexed by its production and its field name
+        self.prod_field2id = {(prod, field): i for i, (prod, field) in enumerate(self.production_and_fields)}
+        self.id2prod_field = {i: (prod, field) for (prod, field), i in self.prod_field2id.items()}
+
+        # get the root type
+        self.root_type = root_type
+
+        # get primitive types
+        self.primitive_types = [type for type in self.types if type not in self.type2productions and type.is_leaf]
+        for type in self.primitive_types:
+            type.is_composite = False
+        self.composite_types = [type for type in self.types if type not in self.primitive_types]
+
     def __len__(self):
         return self.size
 
-    @property
-    def productions(self):
-        return sorted(chain.from_iterable(self._productions.values()), key=lambda x: repr(x))
-
     def __getitem__(self, datum):
+        # get all descendant productions given a type (string)
         if isinstance(datum, str):
-            return self._productions[ASDLType(datum)]
+            return self.type2productions[ASDLType(datum)]
         elif isinstance(datum, ASDLType):
-            return self._productions[datum]
+            return self.type2productions[datum]
 
     def get_prod_by_ctr_name(self, name):
         return self._constructor_production_map[name]
+
+    def get_constructor_by_name(self, name):
+        return self._constructor_production_map[name].constructor
 
     @property
     def types(self):
@@ -64,26 +78,39 @@ class ASDLGrammar(object):
         return self._types
 
     @property
+    def descendant_types(self):
+        if not hasattr(self, '_descendant_types'):
+            self._descendant_types = dict()
+            for parent_type, prods in self.type2productions.items():
+                self._descendant_types.setdefault(parent_type, set()).update(map(lambda prod: prod.type, prods))
+
+        return self._descendant_types
+
+    @property
     def fields(self):
         if not hasattr(self, '_fields'):
             all_fields = set()
             for prod in self.productions:
                 all_fields.update(prod.constructor.fields)
 
-            self._fields = sorted(all_fields, key=lambda x: (x.name, x.type.name, x.cardinality))
+            self._fields = sorted(all_fields, key=lambda x: x.name)
 
         return self._fields
 
     @property
-    def primitive_types(self):
-        return filter(lambda x: isinstance(x, ASDLPrimitiveType), self.types)
+    def production_and_fields(self):
+        if not hasattr(self, '_prod_and_fields'):
+            all_fields = set()
+            for prod in self.productions:
+                for field in prod.constructor.fields:
+                    all_fields.add((prod, field))
 
-    @property
-    def composite_types(self):
-        return filter(lambda x: isinstance(x, ASDLCompositeType), self.types)
+            self._prod_and_fields = sorted(all_fields, key=lambda x: (x[0].type.name, x[0].constructor.name, x[1].name))
+
+        return self._prod_and_fields
 
     def is_composite_type(self, asdl_type):
-        return asdl_type in self.composite_types
+        return asdl_type in self.composite_types and asdl_type.is_composite
 
     def is_primitive_type(self, asdl_type):
         return asdl_type in self.primitive_types
@@ -158,7 +185,8 @@ class ASDLGrammar(object):
             if line_no == len(lines):
                 break
 
-        grammar = ASDLGrammar(all_productions, language)
+        root_type = all_productions[0].type
+        grammar = ASDLGrammar(all_productions, root_type, language)
 
         return grammar
 
