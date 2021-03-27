@@ -13,19 +13,19 @@ conda activate structural_edits
 Install the punkt tokenizer:
 ```
 python
-import nltk
-nltk.download('punkt')
-<ctrl-D>
+>>> import nltk
+>>> nltk.download('punkt')
+>>> <ctrl-D>
 ```
 
 ## 2. Data
-Please extract the dataset and vocabulary files by:
+Please extract the datasets and vocabulary files by:
 ```
 cd source_data
 tar -xzvf githubedits.tar.gz
 ```
 
-Download the complete GitHubEdits and Fixers data from [Yin et al., (2019)](http://www.cs.cmu.edu/~pengchey/githubedits.zip) and place the files as the following:
+All necessary source data has been included as the following:
 ```
 | --source_data
 |       |-- githubedits
@@ -36,10 +36,11 @@ Download the complete GitHubEdits and Fixers data from [Yin et al., (2019)](http
 |           |-- configs
 |               |-- ...(model config json files)
 ```
-A 20\% sample from the GitHubEdits training set has been included as `source_data/githubedits/githubedits.train_20p.jsonl`.
+A sample file containing 20% of the GitHubEdits training data is included as `source_data/githubedits/githubedits.train_20p.jsonl` for running small experiments.
 
-The vocabulary files for both Graph2Tree (Yin et al., 2019) and our proposed Graph2Edit model have been included.
-To create your own vocabulary, see `edit_components/vocab.py`.
+We have generated and included the vocabulary files as well. To create your own vocabulary, see `edit_components/vocab.py`.
+
+Copyright: The original data were downloaded from [Yin et al., (2019)](http://www.cs.cmu.edu/~pengchey/githubedits.zip).
 
  
 ## 3. Experiments
@@ -56,6 +57,8 @@ For example, if you want to train Graph2Edit + Sequence Edit Encoder on GitHubEd
 ```
 bash scripts/githubedits/train.sh source_data/githubedits/configs/graph2iteredit.seq_edit_encoder.20p.json
 ```
+(Note: when you run the experiment for the first time, you might need to wait for ~15 minutes for data preprocessing.)
+
 
 To further train the model with PostRefine imitation learning, 
 replace `FOLDER_OF_SUPERVISED_PRETRAINED_MODEL` with your model dir in `source_data/githubedits/configs/graph2iteredit.seq_edit_encoder.20p.postrefine.imitation.json`,
