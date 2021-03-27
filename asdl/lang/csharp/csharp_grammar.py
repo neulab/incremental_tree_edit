@@ -19,7 +19,7 @@ class CSharpASDLGrammar(ASDLGrammar):
 
     def to_json(self):
         grammar_rules = []
-        for prod in self._productions:
+        for prod in self.productions:
             entry = dict(constructor=prod.constructor.name,
                          fields=[dict(name=f.name, type=f.type.name) for f in prod.constructor.fields])
             grammar_rules.append(entry)

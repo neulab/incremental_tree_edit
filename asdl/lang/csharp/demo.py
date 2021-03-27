@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
     open('grammar.json', 'w').write(grammar.to_json())
 
-    ast_json_list = open('../../../githubedits_data/release/data/csharp_fixers.jsonl').readlines()
+    ast_json_list = open('../../../source_data/githubedits/githubedits.train_20p.jsonl').readlines()
     ast_json = ast_json_list[0]
 
     ast_json_obj = json.loads(ast_json)['PrevCodeAST']

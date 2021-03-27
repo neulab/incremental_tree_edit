@@ -17,7 +17,7 @@ class SubstitutionSystem(object):
         self.grammar = self.transition_system.grammar
 
     def get_decoding_edits_fast(self, src_ast: AbstractSyntaxTree, tgt_ast: AbstractSyntaxTree,
-                                bool_copy_subtree=False, memory_space='all_init', memory_encode='joint',
+                                bool_copy_subtree=True, memory_space='all_init', memory_encode='joint',
                                 preset_memory=None, init_code_tokens=None, last_edit_field_node=None,
                                 bool_debug=False):
         """
@@ -34,7 +34,7 @@ class SubstitutionSystem(object):
         # tgt_ast = tgt_ast.copy_and_reindex_w_dummy_reduce()
 
         assert src_ast.root_node.production == tgt_ast.root_node.production, "WARNING: Different AST roots found!"
-        memory = None
+        memory = set()
         if bool_copy_subtree:
             if preset_memory is not None:
                 preset_memory_repr = []
