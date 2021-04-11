@@ -46,29 +46,32 @@ Copyright: The original data were downloaded from [Yin et al., (2019)](http://ww
 ## 3. Experiments
 See training and test scripts in `scripts/githubedits/`. Please configure the `PYTHONPATH` environment variable in line 6.
  
-### Training
-For training, uncomment the setting in `scripts/githubedits/train.sh` and run:
+### 3.1 Training
+For training, uncomment the desired setting in `scripts/githubedits/train.sh` and run:
 ```
 bash scripts/githubedits/train.sh source_data/githubedits/configs/CONFIGURATION_FILE
 ```
+where `CONFIGURATION_FILE` is the json file of your setting. 
 
-Please replace `CONFIGURATION_FILE` with the json file of your setting. 
-For example, if you want to train Graph2Edit + Sequence Edit Encoder on GitHubEdits's 20\% sample data, run:
+
+#### Supervised Learning
+For example, if you want to train Graph2Edit + Sequence Edit Encoder on GitHubEdits's 20\% sample data, please uncomment only line 21-25 in `scripts/githubedits/train.sh` and run:
 ```
 bash scripts/githubedits/train.sh source_data/githubedits/configs/graph2iteredit.seq_edit_encoder.20p.json
 ```
 (Note: when you run the experiment for the first time, you might need to wait for ~15 minutes for data preprocessing.)
 
 
+#### Imitation Learning
 To further train the model with PostRefine imitation learning, 
-replace `FOLDER_OF_SUPERVISED_PRETRAINED_MODEL` with your model dir in `source_data/githubedits/configs/graph2iteredit.seq_edit_encoder.20p.postrefine.imitation.json`,
-and run:
+please replace `FOLDER_OF_SUPERVISED_PRETRAINED_MODEL` with your model dir in `source_data/githubedits/configs/graph2iteredit.seq_edit_encoder.20p.postrefine.imitation.json`.
+Uncomment only line 27-31 in `scripts/githubedits/train.sh` and run:
 ```
 bash scripts/githubedits/train.sh source_data/githubedits/configs/graph2iteredit.seq_edit_encoder.20p.postrefine.imitation.json
 ```
 
-### Test
-To test a trained model, first uncomment the setting in `scripts/githubedits/test.sh` and replace `work_dir` with your model directory, 
+### 3.2 Test
+To test a trained model, first uncomment only the desired setting in `scripts/githubedits/test.sh` and replace `work_dir` with your model directory, 
 and then run:
 ```
 bash scripts/githubedits/test.sh
