@@ -42,6 +42,10 @@ We have generated and included the vocabulary files as well. To create your own 
 
 Copyright: The original data were downloaded from [Yin et al., (2019)](http://www.cs.cmu.edu/~pengchey/githubedits.zip).
 
+
+### 2.1 Data Preprocessing and Sanity Check
+Todo: when applying the model to a different programming language, how to check/debug the ASDL grammar implementation, the abstract syntactic tree preprocessing, and the ground-truth edit sequence generation?
+
  
 ## 3. Experiments
 See training and test scripts in `scripts/githubedits/`. Please configure the `PYTHONPATH` environment variable in line 6.
