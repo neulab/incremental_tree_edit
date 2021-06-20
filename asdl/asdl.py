@@ -43,11 +43,11 @@ class ASDLGrammar(object):
         # get the root type
         self.root_type = root_type
 
-        # get primitive types
-        self.primitive_types = [type for type in self.types if type not in self.type2productions and type.is_leaf]
-        for type in self.primitive_types:
-            type.is_composite = False
-        self.composite_types = [type for type in self.types if type not in self.primitive_types]
+        # # get primitive types
+        # self.primitive_types = [type for type in self.types if type not in self.type2productions and type.is_leaf]
+        # for type in self.primitive_types:
+        #     type.is_composite = False
+        # self.composite_types = [type for type in self.types if type not in self.primitive_types]
 
     def __len__(self):
         return self.size
@@ -109,8 +109,16 @@ class ASDLGrammar(object):
 
         return self._prod_and_fields
 
+    @property
+    def primitive_types(self):
+        return filter(lambda x: isinstance(x, ASDLPrimitiveType), self.types)
+
+    @property
+    def composite_types(self):
+        return filter(lambda x: isinstance(x, ASDLCompositeType), self.types)
+
     def is_composite_type(self, asdl_type):
-        return asdl_type in self.composite_types and asdl_type.is_composite
+        return asdl_type in self.composite_types
 
     def is_primitive_type(self, asdl_type):
         return asdl_type in self.primitive_types
@@ -332,11 +340,13 @@ class ASDLType(object):
 
 
 class ASDLCompositeType(ASDLType):
-    pass
+    def __init__(self, type_name, parent_type=None, is_composite=True):
+        super().__init__(type_name, parent_type=parent_type, is_composite=is_composite)
 
 
 class ASDLPrimitiveType(ASDLType):
-    pass
+    def __init__(self, type_name, parent_type=None, is_composite=False):
+        super().__init__(type_name, parent_type=parent_type, is_composite=is_composite)
 
 
 if __name__ == '__main__':

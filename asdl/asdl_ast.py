@@ -371,7 +371,7 @@ class SyntaxToken(object):
         self.id = id
         self.type = type
         self.value = value
-        self.position = position
+        self.position = position # index of the token in the original (code tok seq) input
 
         # record its parent field to which it's attached
         self.parent_field = None

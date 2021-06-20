@@ -1,5 +1,6 @@
 import json
 from tqdm import tqdm
+import pickle
 
 from asdl.lang.csharp.csharp_transition import CSharpTransitionSystem
 from asdl.lang.csharp.csharp_grammar import CSharpASDLGrammar
@@ -20,6 +21,7 @@ if __name__ == '__main__':
     grammar = CSharpASDLGrammar.from_roslyn_xml(csharp_grammar_text, pruning=True)
 
     open('grammar.json', 'w').write(grammar.to_json())
+    # tgt_edits_outputs = []
 
     ast_json_lines = open('../../../source_data/githubedits/githubedits.train_20p.jsonl').readlines()
     for ast_json_idx in tqdm(range(len(ast_json_lines))):
@@ -60,3 +62,6 @@ if __name__ == '__main__':
                                                                 init_code_tokens=previous_code_chunk,
                                                                 bool_debug=True)
 
+        # tgt_edits_outputs.append(tgt_edits)
+
+    # pickle.dump(tgt_edits_outputs, open('./tgt_edits_outputs.pkl', 'wb'))

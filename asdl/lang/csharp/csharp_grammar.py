@@ -17,6 +17,22 @@ class CSharpASDLGrammar(ASDLGrammar):
     def __init__(self, productions, root_type):
         super().__init__(productions, root_type, language='csharp')
 
+        self._primitive_types = [type for type in self.types if type not in self.type2productions and type.is_leaf]
+        for type in self._primitive_types:
+            type.is_composite = False
+
+        self._composite_types = [type for type in self.types if type not in self.primitive_types]
+        for type in self._composite_types:
+            type.is_composite = True
+
+    @property
+    def primitive_types(self):
+        return self._primitive_types
+
+    @property
+    def composite_types(self):
+        return self._composite_types
+
     def to_json(self):
         grammar_rules = []
         for prod in self.productions:
