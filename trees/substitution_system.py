@@ -16,10 +16,349 @@ class SubstitutionSystem(object):
         self.transition_system = transition_system
         self.grammar = self.transition_system.grammar
 
+    def _generate_decoding_edits(self, src_node_in_hyp, tgt_node, edit_mappings, hyp,
+                                 priority_field_node_queue=None, preset_memory=None, bool_debug=False):
+        tgt_decoding_edits = []
+
+        src_node_parent_field = src_node_in_hyp.parent_field
+        if src_node_parent_field is not None:
+            src_node_parent_field_repr = get_field_repr(src_node_parent_field)
+            src_node_val_idx = find_by_id(src_node_parent_field.as_value_list, src_node_in_hyp)
+
+        num_total_fields = len(src_node_in_hyp.fields)
+
+        prioritized_field_indices = range(num_total_fields)
+        if priority_field_node_queue is not None and len(priority_field_node_queue):
+            prioritized_field_idx, prioritized_field = priority_field_node_queue.pop(0)
+            assert isinstance(prioritized_field, RealizedField)
+            assert len(src_node_in_hyp.fields) > prioritized_field_idx and get_field_repr(prioritized_field) == \
+                   get_field_repr(src_node_in_hyp.fields[prioritized_field_idx])
+            if prioritized_field_idx != 0:
+                prioritized_field_indices = list(range(prioritized_field_idx, num_total_fields)) + list(
+                    range(prioritized_field_idx))
+
+        for level_edit_idx, field_idx in enumerate(prioritized_field_indices):
+            if level_edit_idx == 0:  # the very first edit
+                working_src_node = src_node_in_hyp
+            else:  # locate "src_node_in_hyp" in the current hyp
+                if src_node_parent_field is None:  # root
+                    working_src_node = hyp.tree.root_node
+                else:
+                    working_src_node_parent_field = hyp.repr2field[src_node_parent_field_repr]
+                    working_src_node = working_src_node_parent_field.as_value_list[src_node_val_idx]
+
+            src_field = working_src_node.fields[field_idx]
+            tgt_field = tgt_node.fields[field_idx]
+
+            if (field_idx, field_idx) not in edit_mappings or \
+                    len(edit_mappings[(field_idx, field_idx)]) == 0:  # empty field
+                assert src_field.cardinality in ('optional', 'multiple')
+                continue
+
+            mappings = edit_mappings[(field_idx, field_idx)]
+
+            src_value_list = src_field.as_value_list
+            value_pointer = 0
+
+            prioritized_mappings = mappings
+            reset_mapping_idx = 0
+            if priority_field_node_queue is not None and len(priority_field_node_queue):
+                prioritized_node_idx, prioritized_node = priority_field_node_queue.pop(0)
+                assert isinstance(prioritized_node, (AbstractSyntaxNode, SyntaxToken))
+                if src_field.cardinality == 'multiple':
+                    src_val_idx_in_mappings = [_i for _i in range(len(mappings)) if mappings[_i][0] is not None]
+                    assert mappings[src_val_idx_in_mappings[prioritized_node_idx]][0] == prioritized_node
+
+                    start_mapping_idx = src_val_idx_in_mappings[prioritized_node_idx]
+                    if start_mapping_idx != 0:
+                        prioritized_mappings = mappings[start_mapping_idx:] + mappings[:start_mapping_idx]
+                        reset_mapping_idx = len(mappings) - start_mapping_idx
+                        value_pointer = prioritized_node_idx  # revise from the prioritized_node_idx-th child
+
+            for mapping_idx, (src_val, tgt_val, child_edit_mappings) in enumerate(prioritized_mappings):
+                if mapping_idx == reset_mapping_idx:
+                    value_pointer = 0
+
+                if src_val is not None and tgt_val is None:  # del
+                    assert child_edit_mappings is None
+
+                    if bool_debug:
+                        field_repr = get_field_repr(src_field)
+                        assert field_repr in hyp.repr2field, "Apply edit: Field not found in state!"
+                        cur_field = hyp.repr2field[field_repr]
+                        assert id(cur_field) == id(src_field)
+                    else:
+                        cur_field = src_field
+
+                    cur_code_ast = hyp.tree
+                    anchor_node = cur_field.as_value_list[value_pointer]
+                    assert anchor_node == src_val
+                    valid_cont_node_and_ids = self.get_valid_continuating_node_ids(hyp, "delete", bool_return_node=True)
+                    if bool_debug: assert (anchor_node, anchor_node.id) in valid_cont_node_and_ids
+                    valid_cont_node_ids = [node_id for node, node_id in valid_cont_node_and_ids]
+                    left_sibling_ids, right_sibling_ids = get_sibling_ids(cur_field, anchor_node)
+
+                    decoding_edit = Delete(cur_field, value_pointer, anchor_node,
+                                           meta={'tree': cur_code_ast,
+                                                 'left_sibling_ids': left_sibling_ids,
+                                                 'right_sibling_ids': right_sibling_ids,
+                                                 'valid_cont_node_ids': valid_cont_node_ids})
+                    tgt_decoding_edits.append(decoding_edit)
+
+                    hyp = hyp.copy_and_apply_edit(decoding_edit)
+                    edited_field_hyp = hyp.last_edit_field_node[0]
+                    if bool_debug and preset_memory is None:
+                        pos_in_init_tree = set(hyp.init_tree_w_dummy_reduce.syntax_token_position2id.keys())
+                        pos_in_cur_tree = set(hyp.tree.syntax_token_position2id.keys())
+                        assert len(pos_in_cur_tree - pos_in_init_tree) == 0
+
+                    src_field = edited_field_hyp
+                    src_value_list = src_field.as_value_list
+
+                    # clear priority_field_node_queue
+                    if priority_field_node_queue is not None and len(priority_field_node_queue):
+                        priority_field_node_queue.clear()
+
+                elif src_val is None and tgt_val is not None:  # add new node
+                    if child_edit_mappings is None:
+                        assert isinstance(tgt_val, SyntaxToken)
+                        tgt_val.position = -1  # safeguard
+
+                        if tgt_field.cardinality == 'multiple':
+                            _tmp_tgt_field = RealizedField(tgt_field.field, value=[tgt_val])
+                        else:
+                            _tmp_tgt_field = RealizedField(tgt_field.field, value=tgt_val)
+                        field_actions = self.transition_system.get_primitive_field_actions(_tmp_tgt_field)
+                        # for action in field_actions:
+                        #     if isinstance(action.token, SyntaxToken):
+                        #         action.token = action.token.value
+
+                        _value_buffer = []
+                        for action in field_actions:
+                            if bool_debug:
+                                field_repr = get_field_repr(src_field)
+                                assert field_repr in hyp.repr2field, "Apply edit: Field not found in state!"
+                                cur_field = hyp.repr2field[field_repr]
+                                assert id(cur_field) == id(src_field)
+                            else:
+                                cur_field = src_field
+
+                            cur_code_ast = hyp.tree
+                            anchor_node = cur_field.as_value_list[value_pointer]
+                            valid_cont_node_and_ids = self.get_valid_continuating_node_ids(hyp, "add",
+                                                                                           bool_return_node=True)
+                            if bool_debug: assert (anchor_node, anchor_node.id) in valid_cont_node_and_ids
+                            valid_cont_node_ids = [node_id for node, node_id in valid_cont_node_and_ids]
+                            left_sibling_ids, right_sibling_ids = get_sibling_ids(cur_field, anchor_node)
+
+                            meta = {'tree': cur_code_ast,
+                                    'left_sibling_ids': left_sibling_ids,
+                                    'right_sibling_ids': right_sibling_ids,
+                                    'valid_cont_node_ids': valid_cont_node_ids}
+
+                            assert isinstance(action, GenTokenAction) and \
+                                   "add_gen_token" in self.get_valid_continuating_add_types(hyp, cur_field)
+                            assert isinstance(action.token, SyntaxToken) and action.token.position == -1
+
+                            decoding_edit = Add(cur_field, value_pointer, action,
+                                                value_buffer=list(_value_buffer) if _value_buffer is not None else None,
+                                                meta=meta)
+                            tgt_decoding_edits.append(decoding_edit)
+
+                            # buffer update
+                            if src_field.type.name == 'string':
+                                assert not isinstance(self.transition_system, CSharpTransitionSystem)  # FIXME
+                                if not action.is_stop_signal():
+                                    _value_buffer.append(action.token.value if isinstance(action.token, SyntaxToken)
+                                                         else action.token)
+
+                            hyp = hyp.copy_and_apply_edit(decoding_edit)
+                            edited_field_hyp = hyp.last_edit_field_node[0]
+                            if bool_debug and preset_memory is None:
+                                pos_in_init_tree = set(hyp.init_tree_w_dummy_reduce.syntax_token_position2id.keys())
+                                pos_in_cur_tree = set(hyp.tree.syntax_token_position2id.keys())
+                                assert len(pos_in_cur_tree - pos_in_init_tree) == 0
+
+                            src_field = edited_field_hyp
+                            src_value_list = src_field.as_value_list
+
+                        value_pointer += 1
+                    elif isinstance(child_edit_mappings, str) and child_edit_mappings == "[COPY]":  # copy subtree
+                        if bool_debug:
+                            field_repr = get_field_repr(src_field)
+                            assert field_repr in hyp.repr2field, "Apply edit: Field not found in state!"
+                            cur_field = hyp.repr2field[field_repr]
+                            assert id(cur_field) == id(src_field)
+                        else:
+                            cur_field = src_field
+
+                        cur_code_ast = hyp.tree
+                        anchor_node = cur_field.as_value_list[value_pointer]
+                        valid_cont_node_and_ids = self.get_valid_continuating_node_ids(hyp, "add_subtree",
+                                                                                       bool_return_node=True)
+                        if bool_debug: assert (anchor_node, anchor_node.id) in valid_cont_node_and_ids
+                        valid_cont_node_ids = [node_id for node, node_id in valid_cont_node_and_ids]
+
+                        left_sibling_ids, right_sibling_ids = get_sibling_ids(cur_field, anchor_node)
+                        # tree_node_ids_to_copy = [node.id for node in hyp.memory if node == edit.node]
+                        tree_node_ids_to_copy = []
+                        safe_edit_node, safe_edit_node_idx_in_memory = None, None
+                        for node_idx_in_memory, node in enumerate(hyp.memory):
+                            if node == tgt_val:
+                                # tree_node_ids_to_copy.append(node.id)
+                                tree_node_ids_to_copy.append(node_idx_in_memory)
+                                if safe_edit_node is None:
+                                    safe_edit_node = node
+                                    safe_edit_node_idx_in_memory = node_idx_in_memory
+
+                        assert safe_edit_node is not None
+                        if bool_debug: assert "add_subtree" in self.get_valid_continuating_add_types(hyp, cur_field)
+                        valid_cont_subtree_node_and_ids = self.get_valid_continuating_add_subtree(hyp, cur_field,
+                                                                                                  bool_return_subtree=True)
+                        # if bool_debug: assert (edit.node, edit.node.id) in valid_cont_subtree_node_and_ids
+                        if bool_debug: assert (safe_edit_node,
+                                               safe_edit_node_idx_in_memory) in valid_cont_subtree_node_and_ids
+                        valid_cont_subtree_ids = [node_id for node, node_id in valid_cont_subtree_node_and_ids]
+                        if bool_debug: assert max(valid_cont_subtree_ids) < len(hyp.memory)
+
+                        decoding_edit = AddSubtree(cur_field, value_pointer, safe_edit_node,
+                                                   meta={'tree': cur_code_ast,
+                                                         'left_sibling_ids': left_sibling_ids,
+                                                         'right_sibling_ids': right_sibling_ids,
+                                                         'valid_cont_node_ids': valid_cont_node_ids,
+                                                         'tree_node_ids_to_copy': tree_node_ids_to_copy,
+                                                         'valid_cont_subtree_ids': valid_cont_subtree_ids})
+                        tgt_decoding_edits.append(decoding_edit)
+
+                        value_pointer += 1
+
+                        hyp = hyp.copy_and_apply_edit(decoding_edit)
+                        edited_field_hyp = hyp.last_edit_field_node[0]
+                        if bool_debug and preset_memory is None:
+                            pos_in_init_tree = set(hyp.init_tree_w_dummy_reduce.syntax_token_position2id.keys())
+                            pos_in_cur_tree = set(hyp.tree.syntax_token_position2id.keys())
+                            assert len(pos_in_cur_tree - pos_in_init_tree) == 0
+
+                        src_field = edited_field_hyp
+                        src_value_list = src_field.as_value_list
+                    else:
+                        if bool_debug:
+                            field_repr = get_field_repr(src_field)
+                            assert field_repr in hyp.repr2field, "Apply edit: Field not found in state!"
+                            cur_field = hyp.repr2field[field_repr]
+                            assert id(cur_field) == id(src_field)
+                        else:
+                            cur_field = src_field
+
+                        cur_code_ast = hyp.tree
+                        anchor_node = cur_field.as_value_list[value_pointer]
+                        valid_cont_node_and_ids = self.get_valid_continuating_node_ids(hyp, "add",
+                                                                                       bool_return_node=True)
+                        if bool_debug: assert (anchor_node, anchor_node.id) in valid_cont_node_and_ids
+                        valid_cont_node_ids = [node_id for node, node_id in valid_cont_node_and_ids]
+                        left_sibling_ids, right_sibling_ids = get_sibling_ids(cur_field, anchor_node)
+
+                        meta = {'tree': cur_code_ast,
+                                'left_sibling_ids': left_sibling_ids,
+                                'right_sibling_ids': right_sibling_ids,
+                                'valid_cont_node_ids': valid_cont_node_ids}
+
+                        parent_action = ApplyRuleAction(tgt_val.production)
+                        assert isinstance(parent_action, ApplyRuleAction)
+                        if bool_debug: assert "add_apply_rule" in self.get_valid_continuating_add_types(hyp, cur_field)
+                        valid_cont_prod_ids = self.get_valid_continuating_add_production_ids(hyp, cur_field)
+                        if bool_debug: assert self.grammar.prod2id[parent_action.production] in valid_cont_prod_ids
+                        meta['valid_cont_prod_ids'] = valid_cont_prod_ids
+
+                        decoding_edit = Add(cur_field, value_pointer, parent_action, value_buffer=None, meta=meta)
+                        tgt_decoding_edits.append(decoding_edit)
+
+                        hyp = hyp.copy_and_apply_edit(decoding_edit)
+                        edited_field_hyp = hyp.last_edit_field_node[0]
+                        if bool_debug and preset_memory is None:
+                            pos_in_init_tree = set(hyp.init_tree_w_dummy_reduce.syntax_token_position2id.keys())
+                            pos_in_cur_tree = set(hyp.tree.syntax_token_position2id.keys())
+                            assert len(pos_in_cur_tree - pos_in_init_tree) == 0
+
+                        src_field = edited_field_hyp
+                        src_value_list = src_field.as_value_list
+
+                        # check children
+                        new_src_val = src_value_list[value_pointer]
+                        child_decoding_edits, hyp = self._generate_decoding_edits(
+                            new_src_val, tgt_val, child_edit_mappings, hyp,
+                            priority_field_node_queue=priority_field_node_queue,
+                            preset_memory=preset_memory,
+                            bool_debug=bool_debug)
+                        tgt_decoding_edits.extend(child_decoding_edits)
+
+                        field_repr = get_field_repr(src_field)
+                        assert field_repr in hyp.repr2field, "Apply edit: Field not found in state!"
+                        src_field = hyp.repr2field[field_repr]  # the corresponding field in the updated hyp
+                        src_value_list = src_field.as_value_list
+
+                        value_pointer += 1
+
+                else:
+                    assert src_val is not None and tgt_val is not None
+                    # assert src_val == src_value_list[value_pointer]
+                    if child_edit_mappings is not None:
+                        child_decoding_edits, hyp = self._generate_decoding_edits(
+                            src_value_list[value_pointer], tgt_val, child_edit_mappings, hyp,
+                            priority_field_node_queue=priority_field_node_queue,
+                            preset_memory=preset_memory,
+                            bool_debug=bool_debug)
+                        tgt_decoding_edits.extend(child_decoding_edits)
+
+                        field_repr = get_field_repr(src_field)
+                        assert field_repr in hyp.repr2field, "Apply edit: Field not found in state!"
+                        src_field = hyp.repr2field[field_repr]  # the corresponding field in the updated hyp
+                        src_value_list = src_field.as_value_list
+
+                        value_pointer += 1
+                    else:
+                        value_pointer += 1
+
+        return tgt_decoding_edits, hyp
+
+    def _generate_target_tree_edits(self, src_ast, tgt_ast, edit_mappings, bool_copy_subtree=True,
+                                    memory_type="all_init_joint", init_code_tokens=None, preset_memory=None,
+                                    last_edit_field_node=None, bool_debug=False):
+        hyp = Hypothesis(src_ast, bool_copy_subtree=bool_copy_subtree, memory_type=memory_type,
+                         init_code_tokens=init_code_tokens, memory=preset_memory)
+
+        root_to_edit_field_node_queue = None
+        if last_edit_field_node is not None:
+            last_edit_node = last_edit_field_node[1]
+            if isinstance(last_edit_node, DummyReduce):  # either the last or the only child
+                last_edit_field = last_edit_field_node[0]
+                if len(last_edit_field.as_value_list) == 1:
+                    last_edit_node = last_edit_field.parent_node
+                else:
+                    last_edit_node = last_edit_field.as_value_list[-2]
+            root_to_edit_field_node_queue = get_field_node_queue(last_edit_node)
+
+        tgt_decoding_edits, hyp = self._generate_decoding_edits(hyp.tree.root_node, tgt_ast.root_node,
+                                                                edit_mappings, hyp,
+                                                                priority_field_node_queue=root_to_edit_field_node_queue,
+                                                                preset_memory=preset_memory,
+                                                                bool_debug=bool_debug)
+
+        # final Stop
+        cur_code_ast = hyp.tree
+        decoding_edit = Stop(meta={'tree': cur_code_ast})
+        tgt_decoding_edits.append(decoding_edit)
+
+        assert hyp.tree.root_node == tgt_ast.root_node  # sanity check
+        last_edit = tgt_decoding_edits[-1]
+        last_edit.meta['memory'] = [AbstractSyntaxTree(subtree) for subtree in hyp.memory]
+
+        return tgt_decoding_edits
+
     def get_decoding_edits_fast(self, src_ast: AbstractSyntaxTree, tgt_ast: AbstractSyntaxTree,
                                 bool_copy_subtree=True, memory_space='all_init', memory_encode='joint',
                                 preset_memory=None, init_code_tokens=None, last_edit_field_node=None,
-                                bool_debug=False):
+                                return_edits=True, bool_debug=False):
         """
         Generate gold edit sequence for training model decoder. Fast implementation.
 
@@ -54,328 +393,15 @@ class SubstitutionSystem(object):
             src_ast.root_node, tgt_ast.root_node,
             memory=memory, memory_space=memory_space)
 
-        def _generate_decoding_edits(src_node_in_hyp, tgt_node, edit_mappings, hyp, priority_field_node_queue=None):
-            tgt_decoding_edits = []
-
-            src_node_parent_field = src_node_in_hyp.parent_field
-            if src_node_parent_field is not None:
-                src_node_parent_field_repr = get_field_repr(src_node_parent_field)
-                src_node_val_idx = find_by_id(src_node_parent_field.as_value_list, src_node_in_hyp)
-
-            num_total_fields = len(src_node_in_hyp.fields)
-
-            prioritized_field_indices = range(num_total_fields)
-            if priority_field_node_queue is not None and len(priority_field_node_queue):
-                prioritized_field_idx, prioritized_field = priority_field_node_queue.pop(0)
-                assert isinstance(prioritized_field, RealizedField)
-                assert len(src_node_in_hyp.fields) > prioritized_field_idx and get_field_repr(prioritized_field) == \
-                       get_field_repr(src_node_in_hyp.fields[prioritized_field_idx])
-                if prioritized_field_idx != 0:
-                    prioritized_field_indices = list(range(prioritized_field_idx, num_total_fields)) + list(range(prioritized_field_idx))
-
-            for level_edit_idx, field_idx in enumerate(prioritized_field_indices):
-                if level_edit_idx == 0: # the very first edit
-                    working_src_node = src_node_in_hyp
-                else: # locate "src_node_in_hyp" in the current hyp
-                    if src_node_parent_field is None: # root
-                        working_src_node = hyp.tree.root_node
-                    else:
-                        working_src_node_parent_field = hyp.repr2field[src_node_parent_field_repr]
-                        working_src_node = working_src_node_parent_field.as_value_list[src_node_val_idx]
-
-                src_field = working_src_node.fields[field_idx]
-                tgt_field = tgt_node.fields[field_idx]
-
-                if (field_idx, field_idx) not in edit_mappings or \
-                        len(edit_mappings[(field_idx, field_idx)]) == 0:  # empty field
-                    assert src_field.cardinality in ('optional', 'multiple')
-                    continue
-
-                mappings = edit_mappings[(field_idx, field_idx)]
-
-                src_value_list = src_field.as_value_list
-                value_pointer = 0
-
-                prioritized_mappings = mappings
-                reset_mapping_idx = 0
-                if priority_field_node_queue is not None and len(priority_field_node_queue):
-                    prioritized_node_idx, prioritized_node = priority_field_node_queue.pop(0)
-                    assert isinstance(prioritized_node, (AbstractSyntaxNode, SyntaxToken))
-                    if src_field.cardinality == 'multiple':
-                        src_val_idx_in_mappings = [_i for _i in range(len(mappings)) if mappings[_i][0] is not None]
-                        assert mappings[src_val_idx_in_mappings[prioritized_node_idx]][0] == prioritized_node
-
-                        start_mapping_idx = src_val_idx_in_mappings[prioritized_node_idx]
-                        if start_mapping_idx != 0:
-                            prioritized_mappings = mappings[start_mapping_idx:] + mappings[:start_mapping_idx]
-                            reset_mapping_idx = len(mappings) - start_mapping_idx
-                            value_pointer = prioritized_node_idx # revise from the prioritized_node_idx-th child
-
-                for mapping_idx, (src_val, tgt_val, child_edit_mappings) in enumerate(prioritized_mappings):
-                    if mapping_idx == reset_mapping_idx:
-                        value_pointer = 0
-
-                    if src_val is not None and tgt_val is None:  # del
-                        assert child_edit_mappings is None
-
-                        if bool_debug:
-                            field_repr = get_field_repr(src_field)
-                            assert field_repr in hyp.repr2field, "Apply edit: Field not found in state!"
-                            cur_field = hyp.repr2field[field_repr]
-                            assert id(cur_field) == id(src_field)
-                        else:
-                            cur_field = src_field
-
-                        cur_code_ast = hyp.tree
-                        anchor_node = cur_field.as_value_list[value_pointer]
-                        assert anchor_node == src_val
-                        valid_cont_node_and_ids = self.get_valid_continuating_node_ids(hyp, "delete", bool_return_node=True)
-                        if bool_debug: assert (anchor_node, anchor_node.id) in valid_cont_node_and_ids
-                        valid_cont_node_ids = [node_id for node, node_id in valid_cont_node_and_ids]
-                        left_sibling_ids, right_sibling_ids = get_sibling_ids(cur_field, anchor_node)
-
-                        decoding_edit = Delete(cur_field, value_pointer, anchor_node,
-                                               meta={'tree': cur_code_ast,
-                                                     'left_sibling_ids': left_sibling_ids,
-                                                     'right_sibling_ids': right_sibling_ids,
-                                                     'valid_cont_node_ids': valid_cont_node_ids})
-                        tgt_decoding_edits.append(decoding_edit)
-
-                        hyp = hyp.copy_and_apply_edit(decoding_edit)
-                        edited_field_hyp = hyp.last_edit_field_node[0]
-                        if bool_debug and preset_memory is None:
-                            pos_in_init_tree = set(hyp.init_tree_w_dummy_reduce.syntax_token_position2id.keys())
-                            pos_in_cur_tree = set(hyp.tree.syntax_token_position2id.keys())
-                            assert len(pos_in_cur_tree - pos_in_init_tree) == 0
-
-                        src_field = edited_field_hyp
-                        src_value_list = src_field.as_value_list
-
-                        # clear priority_field_node_queue
-                        if priority_field_node_queue is not None and len(priority_field_node_queue):
-                            priority_field_node_queue.clear()
-
-                    elif src_val is None and tgt_val is not None:  # add new node
-                        if child_edit_mappings is None:
-                            assert isinstance(tgt_val, SyntaxToken)
-                            tgt_val.position = -1 # safeguard
-
-                            if tgt_field.cardinality == 'multiple':
-                                _tmp_tgt_field = RealizedField(tgt_field.field, value=[tgt_val])
-                            else:
-                                _tmp_tgt_field = RealizedField(tgt_field.field, value=tgt_val)
-                            field_actions = self.transition_system.get_primitive_field_actions(_tmp_tgt_field)
-                            # for action in field_actions:
-                            #     if isinstance(action.token, SyntaxToken):
-                            #         action.token = action.token.value
-
-                            _value_buffer = []
-                            for action in field_actions:
-                                if bool_debug:
-                                    field_repr = get_field_repr(src_field)
-                                    assert field_repr in hyp.repr2field, "Apply edit: Field not found in state!"
-                                    cur_field = hyp.repr2field[field_repr]
-                                    assert id(cur_field) == id(src_field)
-                                else:
-                                    cur_field = src_field
-
-                                cur_code_ast = hyp.tree
-                                anchor_node = cur_field.as_value_list[value_pointer]
-                                valid_cont_node_and_ids = self.get_valid_continuating_node_ids(hyp, "add", bool_return_node=True)
-                                if bool_debug: assert (anchor_node, anchor_node.id) in valid_cont_node_and_ids
-                                valid_cont_node_ids = [node_id for node, node_id in valid_cont_node_and_ids]
-                                left_sibling_ids, right_sibling_ids = get_sibling_ids(cur_field, anchor_node)
-
-                                meta = {'tree': cur_code_ast,
-                                        'left_sibling_ids': left_sibling_ids,
-                                        'right_sibling_ids': right_sibling_ids,
-                                        'valid_cont_node_ids': valid_cont_node_ids}
-
-                                assert isinstance(action, GenTokenAction) and \
-                                       "add_gen_token" in self.get_valid_continuating_add_types(hyp, cur_field)
-                                assert isinstance(action.token, SyntaxToken) and action.token.position == -1
-
-                                decoding_edit = Add(cur_field, value_pointer, action,
-                                                    value_buffer=list(_value_buffer) if _value_buffer is not None else None,
-                                                    meta=meta)
-                                tgt_decoding_edits.append(decoding_edit)
-
-                                # buffer update
-                                if src_field.type.name == 'string':
-                                    assert not isinstance(self.transition_system, CSharpTransitionSystem)  # FIXME
-                                    if not action.is_stop_signal():
-                                        _value_buffer.append(action.token.value if isinstance(action.token, SyntaxToken)
-                                                             else action.token)
-
-                                hyp = hyp.copy_and_apply_edit(decoding_edit)
-                                edited_field_hyp = hyp.last_edit_field_node[0]
-                                if bool_debug and preset_memory is None:
-                                    pos_in_init_tree = set(hyp.init_tree_w_dummy_reduce.syntax_token_position2id.keys())
-                                    pos_in_cur_tree = set(hyp.tree.syntax_token_position2id.keys())
-                                    assert len(pos_in_cur_tree - pos_in_init_tree) == 0
-
-                                src_field = edited_field_hyp
-                                src_value_list = src_field.as_value_list
-
-                            value_pointer += 1
-                        elif isinstance(child_edit_mappings, str) and child_edit_mappings == "[COPY]":  # copy subtree
-                            if bool_debug:
-                                field_repr = get_field_repr(src_field)
-                                assert field_repr in hyp.repr2field, "Apply edit: Field not found in state!"
-                                cur_field = hyp.repr2field[field_repr]
-                                assert id(cur_field) == id(src_field)
-                            else:
-                                cur_field = src_field
-
-                            cur_code_ast = hyp.tree
-                            anchor_node = cur_field.as_value_list[value_pointer]
-                            valid_cont_node_and_ids = self.get_valid_continuating_node_ids(hyp, "add_subtree", bool_return_node=True)
-                            if bool_debug: assert (anchor_node, anchor_node.id) in valid_cont_node_and_ids
-                            valid_cont_node_ids = [node_id for node, node_id in valid_cont_node_and_ids]
-
-                            left_sibling_ids, right_sibling_ids = get_sibling_ids(cur_field, anchor_node)
-                            # tree_node_ids_to_copy = [node.id for node in hyp.memory if node == edit.node]
-                            tree_node_ids_to_copy = []
-                            safe_edit_node, safe_edit_node_idx_in_memory = None, None
-                            for node_idx_in_memory, node in enumerate(hyp.memory):
-                                if node == tgt_val:
-                                    # tree_node_ids_to_copy.append(node.id)
-                                    tree_node_ids_to_copy.append(node_idx_in_memory)
-                                    if safe_edit_node is None:
-                                        safe_edit_node = node
-                                        safe_edit_node_idx_in_memory = node_idx_in_memory
-
-                            assert safe_edit_node is not None
-                            if bool_debug: assert "add_subtree" in self.get_valid_continuating_add_types(hyp, cur_field)
-                            valid_cont_subtree_node_and_ids = self.get_valid_continuating_add_subtree(hyp, cur_field, bool_return_subtree=True)
-                            # if bool_debug: assert (edit.node, edit.node.id) in valid_cont_subtree_node_and_ids
-                            if bool_debug: assert (safe_edit_node, safe_edit_node_idx_in_memory) in valid_cont_subtree_node_and_ids
-                            valid_cont_subtree_ids = [node_id for node, node_id in valid_cont_subtree_node_and_ids]
-                            if bool_debug: assert max(valid_cont_subtree_ids) < len(hyp.memory)
-
-                            decoding_edit = AddSubtree(cur_field, value_pointer, safe_edit_node,
-                                                       meta={'tree': cur_code_ast,
-                                                             'left_sibling_ids': left_sibling_ids,
-                                                             'right_sibling_ids': right_sibling_ids,
-                                                             'valid_cont_node_ids': valid_cont_node_ids,
-                                                             'tree_node_ids_to_copy': tree_node_ids_to_copy,
-                                                             'valid_cont_subtree_ids': valid_cont_subtree_ids})
-                            tgt_decoding_edits.append(decoding_edit)
-
-                            value_pointer += 1
-
-                            hyp = hyp.copy_and_apply_edit(decoding_edit)
-                            edited_field_hyp = hyp.last_edit_field_node[0]
-                            if bool_debug and preset_memory is None:
-                                pos_in_init_tree = set(hyp.init_tree_w_dummy_reduce.syntax_token_position2id.keys())
-                                pos_in_cur_tree = set(hyp.tree.syntax_token_position2id.keys())
-                                assert len(pos_in_cur_tree - pos_in_init_tree) == 0
-
-                            src_field = edited_field_hyp
-                            src_value_list = src_field.as_value_list
-                        else:
-                            if bool_debug:
-                                field_repr = get_field_repr(src_field)
-                                assert field_repr in hyp.repr2field, "Apply edit: Field not found in state!"
-                                cur_field = hyp.repr2field[field_repr]
-                                assert id(cur_field) == id(src_field)
-                            else:
-                                cur_field = src_field
-
-                            cur_code_ast = hyp.tree
-                            anchor_node = cur_field.as_value_list[value_pointer]
-                            valid_cont_node_and_ids = self.get_valid_continuating_node_ids(hyp, "add", bool_return_node=True)
-                            if bool_debug: assert (anchor_node, anchor_node.id) in valid_cont_node_and_ids
-                            valid_cont_node_ids = [node_id for node, node_id in valid_cont_node_and_ids]
-                            left_sibling_ids, right_sibling_ids = get_sibling_ids(cur_field, anchor_node)
-
-                            meta = {'tree': cur_code_ast,
-                                    'left_sibling_ids': left_sibling_ids,
-                                    'right_sibling_ids': right_sibling_ids,
-                                    'valid_cont_node_ids': valid_cont_node_ids}
-
-                            parent_action = ApplyRuleAction(tgt_val.production)
-                            assert isinstance(parent_action, ApplyRuleAction)
-                            if bool_debug: assert "add_apply_rule" in self.get_valid_continuating_add_types(hyp, cur_field)
-                            valid_cont_prod_ids = self.get_valid_continuating_add_production_ids(hyp, cur_field)
-                            if bool_debug: assert self.grammar.prod2id[parent_action.production] in valid_cont_prod_ids
-                            meta['valid_cont_prod_ids'] = valid_cont_prod_ids
-
-                            decoding_edit = Add(cur_field, value_pointer, parent_action, value_buffer=None, meta=meta)
-                            tgt_decoding_edits.append(decoding_edit)
-
-                            hyp = hyp.copy_and_apply_edit(decoding_edit)
-                            edited_field_hyp = hyp.last_edit_field_node[0]
-                            if bool_debug and preset_memory is None:
-                                pos_in_init_tree = set(hyp.init_tree_w_dummy_reduce.syntax_token_position2id.keys())
-                                pos_in_cur_tree = set(hyp.tree.syntax_token_position2id.keys())
-                                assert len(pos_in_cur_tree - pos_in_init_tree) == 0
-
-                            src_field = edited_field_hyp
-                            src_value_list = src_field.as_value_list
-
-                            # check children
-                            new_src_val = src_value_list[value_pointer]
-                            child_decoding_edits, hyp = _generate_decoding_edits(
-                                new_src_val, tgt_val, child_edit_mappings, hyp,
-                                priority_field_node_queue=priority_field_node_queue)
-                            tgt_decoding_edits.extend(child_decoding_edits)
-
-                            field_repr = get_field_repr(src_field)
-                            assert field_repr in hyp.repr2field, "Apply edit: Field not found in state!"
-                            src_field = hyp.repr2field[field_repr] # the corresponding field in the updated hyp
-                            src_value_list = src_field.as_value_list
-
-                            value_pointer += 1
-
-                    else:
-                        assert src_val is not None and tgt_val is not None
-                        # assert src_val == src_value_list[value_pointer]
-                        if child_edit_mappings is not None:
-                            child_decoding_edits, hyp = _generate_decoding_edits(
-                                src_value_list[value_pointer], tgt_val, child_edit_mappings, hyp,
-                                priority_field_node_queue=priority_field_node_queue)
-                            tgt_decoding_edits.extend(child_decoding_edits)
-
-                            field_repr = get_field_repr(src_field)
-                            assert field_repr in hyp.repr2field, "Apply edit: Field not found in state!"
-                            src_field = hyp.repr2field[field_repr]  # the corresponding field in the updated hyp
-                            src_value_list = src_field.as_value_list
-
-                            value_pointer += 1
-                        else:
-                            value_pointer += 1
-
-            return tgt_decoding_edits, hyp
-
-        hyp = Hypothesis(src_ast, bool_copy_subtree=bool_copy_subtree, memory_type=memory_type,
-                         init_code_tokens=init_code_tokens, memory=preset_memory)
-
-        root_to_edit_field_node_queue = None
-        if last_edit_field_node is not None:
-            last_edit_node = last_edit_field_node[1]
-            if isinstance(last_edit_node, DummyReduce): # either the last or the only child
-                last_edit_field = last_edit_field_node[0]
-                if len(last_edit_field.as_value_list) == 1:
-                    last_edit_node = last_edit_field.parent_node
-                else:
-                    last_edit_node = last_edit_field.as_value_list[-2]
-            root_to_edit_field_node_queue = get_field_node_queue(last_edit_node)
-
-        tgt_decoding_edits, hyp = _generate_decoding_edits(hyp.tree.root_node, tgt_ast.root_node,
-                                                           edit_mappings, hyp,
-                                                           priority_field_node_queue=root_to_edit_field_node_queue)
-
-        # final Stop
-        cur_code_ast = hyp.tree
-        decoding_edit = Stop(meta={'tree': cur_code_ast})
-        tgt_decoding_edits.append(decoding_edit)
-
-        assert hyp.tree.root_node == tgt_ast.root_node # sanity check
-        last_edit = tgt_decoding_edits[-1]
-        last_edit.meta['memory'] = [AbstractSyntaxTree(subtree) for subtree in hyp.memory]
-
-        return tgt_decoding_edits
+        if return_edits:
+            tgt_decoding_edits = self._generate_target_tree_edits(
+                src_ast, tgt_ast, edit_mappings, bool_copy_subtree=bool_copy_subtree,
+                memory_type=memory_type, init_code_tokens=init_code_tokens, preset_memory=preset_memory,
+                last_edit_field_node=last_edit_field_node, bool_debug=bool_debug
+            )
+            return tgt_decoding_edits
+        else:
+            return edit_mappings
 
     def ast_tree_compare(self, src_ast: AbstractSyntaxNode, tgt_ast: AbstractSyntaxNode,
                          memory=None, memory_space='all_init'):

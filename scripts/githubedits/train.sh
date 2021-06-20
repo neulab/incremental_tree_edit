@@ -17,7 +17,8 @@ echo work dir=${work_dir}
 
 mkdir -p ${work_dir}
 
-# TODO: uncomment the training setting
+# TODO 1: uncomment the training setting
+# TODO 2: consider adding `--small_memory` to disable training data preprocessing
 #OMP_NUM_THREADS=1 python -u -m exp_githubedits train \
 # 	--cuda \
 #	--seed=${seed} \

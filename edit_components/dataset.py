@@ -41,8 +41,8 @@ def _encode(word_list):
     return [w.replace('\n', '-NEWLINE-') for w in word_list]
 
 
-def load_one_change_entry_csharp(json_str, editor_type='seq2seq', edit_encoder_type='seq', tensorization=True, debug=False,
-                                 transition_system=None, substitution_system=None, vocab=None, args=None):
+def load_one_change_entry_csharp(json_str, editor_type='seq2seq', edit_encoder_type='seq', tensorization=True,
+                                 transition_system=None, substitution_system=None, vocab=None, args=None, save_edits=True):
     entry = json.loads(json_str)
     previous_code_chunk = _encode(entry['PrevCodeChunkTokens'])
     updated_code_chunk = _encode(entry['UpdatedCodeChunkTokens'])
@@ -88,46 +88,12 @@ def load_one_change_entry_csharp(json_str, editor_type='seq2seq', edit_encoder_t
         else:
             prev_code_ast.reindex_w_dummy_reduce()
             updated_code_ast.reindex_w_dummy_reduce()
+            # Note: when args['small_memory'] is True, `tgt_actions` is the `edit_mappings`, not the actual tgt edits
             tgt_actions = substitution_system.get_decoding_edits_fast(prev_code_ast, updated_code_ast,
                                                                       bool_copy_subtree=args['decoder']['copy_subtree'],
                                                                       init_code_tokens=previous_code_chunk,
+                                                                      return_edits=save_edits,
                                                                       bool_debug=args['debug'])
-
-        if debug:
-            # print('Prev Code')
-            # print(entry['PrevCodeChunk'])
-            #
-            # print('Updated Code')
-            # print(entry['UpdatedCodeChunk'])
-
-            # sys.stdout.flush()
-            #
-            # action_paths = transition_system.get_all_decoding_action_paths(target_ast=updated_code_ast, prev_ast=prev_code_ast, sample_size=10)
-            #
-            action_paths = [tgt_actions]
-            for tgt_actions in action_paths:
-                # sanity check target decoding actions
-                hyp = CSharpHypothesis()
-                for decode_action in tgt_actions:
-                    assert any(
-                        isinstance(decode_action, cls) for cls in transition_system.get_valid_continuation_types(hyp))
-                    if isinstance(decode_action, ApplyRuleAction):
-                        assert decode_action.production in transition_system.get_valid_continuating_productions(hyp)
-
-                    if isinstance(decode_action, ApplySubTreeAction) and hyp.frontier_field:
-                        assert decode_action.tree.production.type in transition_system.grammar.descendant_types[
-                            hyp.frontier_field.type]
-                        # if decode_action.tree.production.type != hyp.frontier_field.type and decode_action.tree.production.type not in hyp.frontier_field.type.child_types:
-                        #     print(decode_action.tree.production.type, hyp.frontier_field.type.child_types)
-
-                    if hyp.frontier_node:
-                        assert hyp.frontier_field == decode_action.frontier_field
-                        assert hyp.frontier_node.production == decode_action.frontier_prod
-
-                    hyp.apply_action(decode_action)
-                assert hyp.tree.to_string() == updated_code_ast.root_node.to_string()
-                assert hyp.tree == updated_code_ast.root_node
-                assert hyp.completed
 
         example = ChangeExample(id=entry['Id'],
                                 prev_data=previous_code_chunk,
@@ -189,7 +155,7 @@ class DataSet:
     @staticmethod
     def load_from_jsonl(file_path, language='csharp', editor=None,
                         editor_type=None, edit_encoder_type=None, args=None, vocab=None, transition_system=None,
-                        substitution_system=None, tensorization=True, from_ipython=False, max_workers=1, debug=False):
+                        substitution_system=None, tensorization=True, from_ipython=False, max_workers=1, save_edits=True):
 
         from edit_model.editor import Seq2SeqEditor, Graph2TreeEditor, Graph2IterEditEditor
 
@@ -247,7 +213,7 @@ class DataSet:
                                                           tensorization=tensorization,
                                                           transition_system=transition_system,
                                                           substitution_system=substitution_system,
-                                                          vocab=vocab, args=args),
+                                                          vocab=vocab, args=args, save_edits=save_edits),
                                                    iterable=all_lines) # chunksize=min(1000, int(len(all_lines)/max_workers))
                     for example in iter_log_func(processed_examples):
                         examples.append(example)
@@ -259,7 +225,7 @@ class DataSet:
                                                     tensorization=tensorization,
                                                     transition_system=transition_system,
                                                     substitution_system=substitution_system,
-                                                    vocab=vocab, args=args)
+                                                    vocab=vocab, args=args, save_edits=save_edits)
                     examples.append(example)
 
         data_set = DataSet([e for e in examples if e])

@@ -13,6 +13,7 @@ Options:
     -h --help                                   Show this screen
     --cuda                                      Use GPU
     --debug                                     Debug mode
+    --small_memory                              On-demand training data processing (no preprocessing)
     --seed=<int>                                Seed [default: 0]
     --work_dir=<dir>                            work dir [default: exp_runs/]
     --sample_size=<int>                         Sample size [default: 1]
@@ -48,6 +49,7 @@ from edit_model.editor import NeuralEditor, ChangedWordPredictionMultiTask, Seq2
     Graph2TreeEditor, Graph2IterEditEditor
 from edit_model.edit_encoder import SequentialChangeEncoder, GraphChangeEncoder
 from trees.utils import calculate_tree_prod_f1, get_productions_str
+from trees.substitution_system import SubstitutionSystem
 
 
 def _extract_record(example):
@@ -60,7 +62,7 @@ def _extract_record(example):
     return record
 
 
-def _load_dataset(filename, mode, model, args):
+def _load_dataset(filename, mode, model, args, small_memory=False):
     assert mode in ('train', 'test')
 
     max_worker = 1
@@ -69,12 +71,19 @@ def _load_dataset(filename, mode, model, args):
         max_worker = args['dataset']['num_data_load_worker']
         tensorization = args['dataset']['tensorization']
 
-    if isinstance(model, Graph2IterEditEditor):
-        filename_suffix = ""
-        if not args['decoder']['copy_subtree']:
-            filename_suffix += "_noCopySubtree"
-        file_save_path = filename.replace('.jsonl', '%s.pkl' % filename_suffix)
+    filename_suffix = ""
+    if not args['decoder']['copy_subtree']:
+        filename_suffix += "_noCopySubtree"
+    if small_memory and mode == 'train':  # the data file will save edit mappings rather than the actual tgt edits
+        if isinstance(model, Graph2IterEditEditor):
+            print("Data preprocessing is disabled for Graph2Edits training.", file=sys.stderr)
+            filename_suffix += "_smallMemory"
+        elif args['edit_encoder']['type'] == 'treediff':
+            print("Data preprocessing is disabled for TreeDiff edits.", file=sys.stderr)
+            filename_suffix += "_smallMemory"
+    file_save_path = filename.replace('.jsonl', '%s.pkl' % filename_suffix)
 
+    if isinstance(model, Graph2IterEditEditor):
         if os.path.exists(file_save_path):
             print("loading dataset from [%s]" % file_save_path, file=sys.stderr)
             begin_time = time.time()
@@ -120,10 +129,12 @@ def _load_dataset(filename, mode, model, args):
                                               language=args['lang'],
                                               editor=model,
                                               max_workers=max_worker,
-                                              tensorization=tensorization)
+                                              tensorization=tensorization,
+                                              save_edits=not small_memory)
             # stats for debug
-            lengths = [len(e.tgt_actions) for e in dataset.examples]
-            print("average gold edit seq length: %.3f" % np.average(lengths), file=sys.stderr)
+            if not small_memory:
+                lengths = [len(e.tgt_actions) for e in dataset.examples]
+                print("average gold edit seq length: %.3f" % np.average(lengths), file=sys.stderr)
 
             print("saving dataset to [%s]" % file_save_path, file=sys.stderr)
             begin_time = time.time()
@@ -132,7 +143,7 @@ def _load_dataset(filename, mode, model, args):
             gc.enable()
             print("time spent: %.3fs" % (time.time() - begin_time), file=sys.stderr)
 
-    else:
+    else: # for other editors, processed datasets will not be saved given the high speed
         dataset = DataSet.load_from_jsonl(filename,
                                           language=args['lang'],
                                           editor=model,
@@ -141,7 +152,7 @@ def _load_dataset(filename, mode, model, args):
 
         if args['edit_encoder']['type'] == 'treediff':  # TreeDiff Edit Encoder
             print('TreeDiff Edit Encoder requires gold edit sequences.', file=sys.stderr)
-            file_save_path = filename.replace('.jsonl', '.pkl')
+            # file_save_path = filename.replace('.jsonl', '.pkl')
             assert os.path.exists(file_save_path)
             print("loading dataset from [%s]" % file_save_path, file=sys.stderr)
             begin_time = time.time()
@@ -158,10 +169,20 @@ def _load_dataset(filename, mode, model, args):
 
 def _train_fn(args, model, optimizer, train_set, dev_set, batch_size, work_dir,
               start_epoch_eval_decode=-1, eval_f1=False, model_name='model', optim_name='optim',
-              max_epoch=None, with_gold_edits=False):
+              max_epoch=None, with_gold_edits=False, small_memory=False):
     parameters = list(model.parameters())
     if max_epoch is None:
         max_epoch = args['trainer']['max_epoch']
+
+    bool_on_demand_batch_process = False
+    if small_memory and (isinstance(model, Graph2IterEditEditor) or args['edit_encoder']['type'] == 'treediff'):
+        bool_on_demand_batch_process = True
+        print('On-demand training data processing is enabled.', file=sys.stderr)
+        if isinstance(model, Graph2IterEditEditor):
+            substitution_system = model.substitution_system
+        else:
+            transition_system = model.transition_system
+            substitution_system = SubstitutionSystem(transition_system)
 
     print(f'training size={len(train_set)}', file=sys.stderr)
     print(f'max_epoch={max_epoch}', file=sys.stderr)
@@ -195,6 +216,28 @@ def _train_fn(args, model, optimizer, train_set, dev_set, batch_size, work_dir,
 
         for batch_examples in train_set.batch_iter(batch_size=batch_size, shuffle=True):
             train_iter += 1
+
+            if bool_on_demand_batch_process: # prepare `tgt_actions` from saved `edit_mappings`
+                for example in batch_examples:
+                    if isinstance(model, Graph2IterEditEditor):
+                        edit_mappings = example.tgt_actions
+                        actual_tgt_edit_sequence = substitution_system._generate_target_tree_edits(
+                            example.prev_code_ast, example.updated_code_ast, edit_mappings,
+                            bool_copy_subtree=args['decoder']['copy_subtree'],
+                            init_code_tokens=example.prev_data
+                        )
+                        example.tgt_actions = actual_tgt_edit_sequence
+                    else:
+                        edit_mappings = example.tgt_edits
+                        actual_tgt_edit_sequence = substitution_system._generate_target_tree_edits(
+                            example.prev_code_ast.copy_and_reindex_w_dummy_reduce(),
+                            example.updated_code_ast.copy_and_reindex_w_dummy_reduce(),
+                            edit_mappings,
+                            bool_copy_subtree=args['decoder']['copy_subtree'],
+                            init_code_tokens=example.prev_data
+                        )
+                        example.tgt_edits = actual_tgt_edit_sequence
+                    example.edit_mappings = edit_mappings
 
             try:
                 optimizer.zero_grad()
@@ -236,6 +279,12 @@ def _train_fn(args, model, optimizer, train_set, dev_set, batch_size, work_dir,
                     raise e
 
             del loss, log_probs, change_vecs, results
+            if bool_on_demand_batch_process: # prepare `tgt_actions` from saved `edit_mappings`
+                for example in batch_examples:
+                    if isinstance(model, Graph2IterEditEditor):
+                        example.tgt_actions = example.edit_mappings
+                    else:
+                        example.tgt_edits = example.edit_mappings
 
             if train_iter % args['trainer']['log_every'] == 0:
                 print('[Iter %d] encoder loss=%.5f, word prediction loss=%.5f, %.2fs/epoch' %
@@ -818,7 +867,8 @@ def train(cmd_args):
     model = NeuralEditor.build(args)
 
     print('loading datasets...', file=sys.stderr)
-    train_set = _load_dataset(args['dataset']['train_file'], 'train', model, args)
+    train_set = _load_dataset(args['dataset']['train_file'], 'train', model, args,
+                              small_memory=cmd_args['--small_memory'])
     dev_set = _load_dataset(args['dataset']['dev_file'], 'train', model, args)
 
     print('loaded train file at [%s] (size=%d), dev file at [%s] (size=%d)' % (
@@ -833,7 +883,8 @@ def train(cmd_args):
     parameters = list(model.parameters())
     optimizer = torch.optim.Adam(parameters, lr=0.001)
 
-    _train_fn(args, model, optimizer, train_set, dev_set, batch_size, work_dir)
+    _train_fn(args, model, optimizer, train_set, dev_set, batch_size, work_dir,
+              small_memory=cmd_args['--small_memory'])
 
 
 def imitation_learning(cmd_args):
@@ -1324,6 +1375,7 @@ if __name__ == '__main__':
     if cmd_args['train']:
         train(cmd_args)
     elif cmd_args['imitation_learning']:
+        assert not cmd_args['--small_memory'], "Small memory is not available for imitation learning."
         imitation_learning(cmd_args)
     elif cmd_args['test_ppl']:
         test_ppl(cmd_args)
