@@ -81,10 +81,10 @@ For training, uncomment the desired setting in `scripts/githubedits/train.sh` an
 bash scripts/githubedits/train.sh source_data/githubedits/configs/CONFIGURATION_FILE
 ```
 where `CONFIGURATION_FILE` is the json file of your setting. 
-Please check out [`scripts/githubedits/train.sh`](scripts/githubedits/train.sh) for details.
+Please check out the `TODO`'s in [`scripts/githubedits/train.sh`](scripts/githubedits/train.sh).
 
 
-#### Supervised Learning
+#### 3.1.1 Supervised Learning
 For example, if you want to train Graph2Edit + Sequence Edit Encoder on GitHubEdits's 20\% sample data, 
 please uncomment only line 22-26 in `scripts/githubedits/train.sh` and run:
 ```
@@ -98,13 +98,14 @@ bash scripts/githubedits/train.sh source_data/githubedits/configs/graph2iteredit
      
 
 
-#### Imitation Learning
+#### 3.1.2 Imitation Learning
 To further train the model with PostRefine imitation learning, 
 please replace `FOLDER_OF_SUPERVISED_PRETRAINED_MODEL` with your model dir in `source_data/githubedits/configs/graph2iteredit.seq_edit_encoder.20p.postrefine.imitation.json`.
 Uncomment only line 27-31 in `scripts/githubedits/train.sh` and run:
 ```
 bash scripts/githubedits/train.sh source_data/githubedits/configs/graph2iteredit.seq_edit_encoder.20p.postrefine.imitation.json
 ```
+Note that `--small_memory` cannot be used in this setting.
 
 ### 3.2 Test
 To test a trained model, first uncomment only the desired setting in `scripts/githubedits/test.sh` and replace `work_dir` with your model directory, 
@@ -112,6 +113,7 @@ and then run:
 ```
 bash scripts/githubedits/test.sh
 ```
+Please check out the `TODO`'s in [`scripts/githubedits/test.sh`](scripts/githubedits/test.sh).
 
 ## 4. FAQ
 
@@ -134,7 +136,7 @@ To this end, several changes are needed:
         However, this resource is still a good starting point; you may consider modify it based on the sanity check outputs.
         
 2. Implementing a language-specific `TransitionSystem` class.
-    - The target edit sequences (i.e., the training data) are calculated by `trees.substitution_system.SubstitutionSystem`,
+    - The target edit sequences (of the training data) are calculated by `trees.substitution_system.SubstitutionSystem`,
         which depends on a `asdl.transition_system.TransitionSystem` object (or its inheritor) (see [reference](trees/substitution_system.py#L16)). 
     - In our current implementation of CSharp, we have reused the `CSharpTransitionSystem` class implemented in the [Graph2Tree library](https://github.com/microsoft/iclr2019-learning-to-represent-edits).
         However, only the `get_primitive_field_actions` function of the `TransitionSystem` class is actually used by the `SubstitutionSystem` ([example](trees/substitution_system.py#L131)). 
@@ -153,17 +155,19 @@ To this end, several changes are needed:
 ### 4.2 Out of Memory Issue
 **The issue:**
 By default, the data preprocessing step will 
-(1) run a dynamic programming algorithm to calculate the shortest edit sequence
-    as the target edit sequence `(a_1, a_2, ..., a_T)` for each code pair `(C-, C+)`, and 
+(1) run a dynamic programming algorithm to calculate the shortest edit sequence `(a_1, a_2, ..., a_T)`
+    as the target edit sequence for each code pair `(C-, C+)`, and 
 (2) save every intermediate tree graph `(g_1, g_2, ..., g_T)`, where `g_{t+1}` is the transformation result of 
-    applying edit action `a_t` to tree `g_t` at time step `t`.
+    applying edit action `a_t` to tree `g_t` at time step `t`, as the input to the tree encoder (see [3.1.2 in our paper](https://openreview.net/pdf?id=v9hAX77--cZ)).
 Therefore, a completely preprocessed training set has a very large size and will take up a lot of CPU memory
 every time you load the data for model training.
 
 **The solution:**
 A simple solution is to avoid saving any intermediate tree graph, 
-i.e., we will only save the DP results from (1) while leaving the generation of intermediate tree graphs of (2) to during the model training.
+i.e., we will only save the shortest edit sequence results from (1) 
+while leaving the generation of intermediate tree graphs in (2) to during the model training.
 This can be done by set `--small_memory` in the [train.sh](scripts/githubedits/train.sh) script. 
+_Currently this option can only be used for regular supervised learning; for imitation learning, this has to be off._
 
 Note that there will be a trade-off between the CPU memory and the GPU utility/training speed, 
 since the generation of the intermediate tree graphs is done at the CPU level.
